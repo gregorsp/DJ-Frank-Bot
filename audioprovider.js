@@ -1,6 +1,5 @@
 const YTDL = require('ytdl-core');
 const YTF = require('youtube-finder');
-const main = require('./bot.js');
 const Discord = require('discord.js');
 const YTDLdisc = require('ytdl-core-discord');
 
@@ -8,7 +7,7 @@ const YTDLdisc = require('ytdl-core-discord');
 var guilds = {};
 
 // youtube video searcher
-const ytclient = YTF.createClient({key: main.config().YOUTUBE_APIKEY});
+const ytclient = YTF.createClient({key: 'AIzaSyC86aNGNpvAjj-o5Cv9iiDkplENL4BeS9Q'});
 
 // methods //
 exports.queueSong = (message, searchString) => {

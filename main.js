@@ -4,7 +4,8 @@ const { Client, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const rest = new REST({ version: '9' }).setToken('ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJeg.Ob5X9LtzF0Nb7acgyM3UVm_2WgE');
 
-var ap = require('audioprovider.js');
+//https://github.com/MonsterMannen/DiscordBotNodeJs/blob/master/commands/play.js
+var ap = require('./audioprovider.js');
 
 const commands = [{
   name: 'ping',
@@ -35,7 +36,6 @@ client.on('interactionCreate', async interaction => {
   switch (clone.commandName) {
     case 'play':
       let songName = clone.options.data[0].value;
-      
       break;
     case 'ping':
       await interaction.reply("no u");  
@@ -44,6 +44,23 @@ client.on('interactionCreate', async interaction => {
     
   console.log(clone);
 });
+/*
+client.on("messageCreate", async (msg) => {
+  console.log(msg);
+  if(!m.startsWith(".")) return;
+  var args = m.substring(1).split(" ");
+  var cmdName = args[0].toLowerCase();
+  var cmdOptions = args.slice(1);
+  var cmdOption  = cmdOptions.join(" ");
+  console.log(cmdOption);
+  switch (cmdName) {
+    case 'play':
+      await ap.queueSong(msg, cmdOption);
+
+      break;
+  }
+  msg.reply(cmdOption);
+});/**/ 
 
 //register commands
 (async () => {
