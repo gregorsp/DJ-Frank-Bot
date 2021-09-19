@@ -4,6 +4,8 @@ const { Client, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const rest = new REST({ version: '9' }).setToken('ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJeg.Ob5X9LtzF0Nb7acgyM3UVm_2WgE');
 
+const ytdl = require('ytdl-core');
+
 //https://github.com/MonsterMannen/DiscordBotNodeJs/blob/master/commands/play.js
 var ap = require('./audioprovider.js');
 
@@ -32,10 +34,12 @@ client.on('ready', () => {
 client.on('interactionCreate', async interaction => {
   //if (!interaction.isCommand()) return;
   const clone = Object.assign({}, interaction);
-  
   switch (clone.commandName) {
     case 'play':
       let songName = clone.options.data[0].value;
+      console.log(songName);
+      await interaction.reply('du wünscht dir: ' + songName);
+      
       break;
     case 'ping':
       await interaction.reply("no u");  
