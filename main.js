@@ -7,7 +7,9 @@ const rest = new REST({ version: '9' }).setToken('ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJe
 const ytdl = require('ytdl-core');
 
 //https://github.com/MonsterMannen/DiscordBotNodeJs/blob/master/commands/play.js
-var ap = require('./audioprovider.js');
+//var ap = require('./audioprovider.js');
+
+var ap = require('./audiomanager.js');
 
 const commands = [{
   name: 'ping',
@@ -15,12 +17,12 @@ const commands = [{
 },
 {
   name:'play',
-  description: 'Play the specified Song',
+  description: 'Song zur Playlist hinzufügen',
   options: [
     {
      type: 3,
      name: 'song',
-     description: 'The Song',
+     description: 'Der Titel',
      required: true
   }]
 }]; 
