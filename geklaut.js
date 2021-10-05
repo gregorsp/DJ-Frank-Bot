@@ -44,6 +44,9 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}stop`)) {
     stop(message, serverQueue);
     return;
+  } else if (message.content.startsWith(`${prefix}say`)) {
+    say(message);
+    return;
   }
   // else {
   //     message.channel.send("You need to enter a valid command!");
@@ -164,7 +167,7 @@ function play(guild, song) {
   }
 
   const dispatcher = serverQueue.connection
-    .play(ytdl(song.url))
+    .play(ytdl(song.url, {quality: "highestaudio", highWaterMark: 1 << 25}))
     .on("finish", () => {
       serverQueue.songs.shift();
       play(guild, serverQueue.songs[0]);
@@ -173,6 +176,12 @@ function play(guild, song) {
   dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
   serverQueue.textChannel.send(`Jetzt: **${song.title}**`);
   serverQueue.textChannel.send(`Den Song mag ich besonders gern!`);
+}
+
+const say = (message) => {
+  const answer = message.content.slice(5);
+  message.channel.send(answer);
+  message.delete();
 }
 
 client.login(token);
