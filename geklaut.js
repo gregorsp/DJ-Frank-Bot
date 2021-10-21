@@ -5,13 +5,15 @@ const ytdl = require("ytdl-core");
 const YTF = require("youtube-finder");
 const util = require('util');
 const fs = require('fs');
+const youtubesearchapi=require('youtube-search-api');
+
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
 const ytclient = YTF.createClient({
-  key: "AIzaSyC86aNGNpvAjj-o5Cv9iiDkplENL4BeS9Q",
+  key: "AIzaSyC-sh8qoiYS1hIw2eauhjJmAF_1L_AKZ7k",
 });
 
 const queue = new Map();
@@ -66,6 +68,7 @@ function isValidHttpUrl(string) {
 }
 
 const getInfo = async (arg) => {
+  arg += ' lyrics -live -karaoke';
   if (isValidHttpUrl(arg)) {
     return await ytdl.getInfo(arg);
   //TODO: handle youtube searcher
@@ -88,12 +91,26 @@ const getInfo = async (arg) => {
         type: 'video'
     }
     const searchresult = await search(params);
+    console.log("Ergebnis:");
     console.log(searchresult);
     const url = "https://www.youtube.com/watch?v=" + searchresult.items[0].id.videoId;
 
     return await ytdl.getInfo(url);
   }
 };
+
+const getInfo2 = async (arg) => {
+  arg += ' lyrics -live -karaoke';
+  if (isValidHttpUrl(arg)) {
+    return await ytdl.getInfo(arg);
+  //TODO: handle youtube searcher
+  } else {
+    let liste = await youtubesearchapi.GetListByKeyword(arg, false);
+    const url = "https://www.youtube.com/watch?v=" + liste.items[0].id;
+
+    return await ytdl.getInfo(url);
+  }
+}
 
 async function execute(message, serverQueue) {
   const args = message.content.split(" ");
@@ -106,8 +123,9 @@ async function execute(message, serverQueue) {
   }
 
   //const songInfo = await ytdl.getInfo(args[1]);
-  const songInfo = await getInfo(args.slice(1).join(" "));
-
+  //const songInfo = await getInfo(args.slice(1).join(" "));
+  const songInfo = await getInfo2(args.slice(1).join(" "));
+  //console.log(songInfo2);
   const song = {
     title: songInfo.videoDetails.title,
     url: songInfo.videoDetails.video_url,
