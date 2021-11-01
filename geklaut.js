@@ -100,7 +100,7 @@ const getInfo = async (arg) => {
 };
 
 const getInfo2 = async (arg) => {
-  arg += ' lyrics -live -karaoke';
+  //arg += ' lyrics -live -karaoke';
   if (isValidHttpUrl(arg)) {
     return await ytdl.getInfo(arg);
   //TODO: handle youtube searcher
@@ -124,7 +124,7 @@ async function execute(message, serverQueue) {
 
   //const songInfo = await ytdl.getInfo(args[1]);
   //const songInfo = await getInfo(args.slice(1).join(" "));
-  const songInfo = await getInfo2(args.slice(1).join(" "));
+  const songInfo = await getInfo(args.slice(1).join(" "));
   //console.log(songInfo2);
   const song = {
     title: songInfo.videoDetails.title,
@@ -190,7 +190,10 @@ function play(guild, song) {
       serverQueue.songs.shift();
       play(guild, serverQueue.songs[0]);
     })
-    .on("error", (error) => console.error(error));
+    .on("error", (error) => { 
+      console.error(error);
+      serverQueue.songs.shift();
+      play(guild, serverQueue.songs[0]);});
   dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
   serverQueue.textChannel.send(`Jetzt: **${song.title}**`);
   serverQueue.textChannel.send(`Den Song mag ich besonders gern!`);
