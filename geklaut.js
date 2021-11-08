@@ -192,11 +192,14 @@ function play(guild, song) {
     })
     .on("error", (error) => { 
       console.error(error);
+      serverQueue.textChannel.send("Fehler beim abspielen:\n"+error);
       serverQueue.songs.shift();
       play(guild, serverQueue.songs[0]);});
   dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
   serverQueue.textChannel.send(`Jetzt: **${song.title}**`);
-  serverQueue.textChannel.send(`Den Song mag ich besonders gern!`);
+  if (Math.random()*5 <1 ) {
+    serverQueue.textChannel.send(`Den Song mag ich besonders gern!`);
+  }
 }
 
 const say = (message) => {
