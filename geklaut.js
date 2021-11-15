@@ -6,7 +6,7 @@ const YTF = require("youtube-finder");
 const util = require('util');
 const fs = require('fs');
 const youtubesearchapi=require('youtube-search-api');
-
+const ytMusic = require('node-youtube-music');
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
@@ -112,6 +112,19 @@ const getInfo2 = async (arg) => {
   }
 }
 
+const getInfo3 = async (arg) => {
+  //arg += ' lyrics -live -karaoke';
+  if (isValidHttpUrl(arg)) {
+    return await ytdl.getInfo(arg);
+  //TODO: handle youtube searcher
+  } else {
+    let liste = await ytMusic.searchMusics(arg);
+    const url = "https://www.youtube.com/watch?v=" + liste[0].youtubeId;
+
+    return await ytdl.getInfo(url);
+  }
+}
+
 async function execute(message, serverQueue) {
   const args = message.content.split(" ");
 
@@ -124,7 +137,7 @@ async function execute(message, serverQueue) {
 
   //const songInfo = await ytdl.getInfo(args[1]);
   //const songInfo = await getInfo(args.slice(1).join(" "));
-  const songInfo = await getInfo(args.slice(1).join(" "));
+  const songInfo = await getInfo3(args.slice(1).join(" "));
   //console.log(songInfo2);
   const song = {
     title: songInfo.videoDetails.title,
