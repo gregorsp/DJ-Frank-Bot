@@ -1,4 +1,4 @@
-const { Client, Intents } = require("discord.js");
+const { Client, Intents, MessageEmbed } = require("discord.js");
 const prefix = ".";
 const token = "ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJeg.Ob5X9LtzF0Nb7acgyM3UVm_2WgE";
 const ytdl = require("ytdl-core");
@@ -142,6 +142,7 @@ async function execute(message, serverQueue) {
   const song = {
     title: songInfo.videoDetails.title,
     url: songInfo.videoDetails.video_url,
+    videoDetails: songInfo.videoDetails,
   };
 
   if (!serverQueue) {
@@ -210,6 +211,8 @@ function play(guild, song) {
       play(guild, serverQueue.songs[0]);});
   dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
   serverQueue.textChannel.send(`Jetzt: **${song.title}**`);
+  serverQueue.textChannel.send(getMusicEmbed(song.videoDetails));
+
   if (Math.random()*5 <1 ) {
     serverQueue.textChannel.send(`Den Song mag ich besonders gern!`);
   }
@@ -219,6 +222,35 @@ const say = (message) => {
   const answer = message.content.slice(5);
   message.channel.send(answer);
   message.delete();
+}
+
+const getMusicEmbed = (videoDetails) => {
+  console.log(videoDetails);
+
+  let author = videoDetails.author.name;
+  if (author.endsWith(" - Topic")){
+    author = author.slice(0, author.length - 8);
+  }
+
+  const embed = new MessageEmbed()
+    .setColor('#0099ff')
+    .setTitle(videoDetails.title)
+    .setURL(videoDetails.video_url)
+    .setAuthor(author, videoDetails.author.thumbnails.slice(-1)[0].url, videoDetails.author.user_url)
+    //.setDescription('Some description here')
+    //.setThumbnail(videoDetails.thumbnails.slice(-1)[0].url)
+    // .addFields(
+    //   { name: 'Regular field title', value: 'Some value here' },
+    //   { name: '\u200B', value: '\u200B' },
+    //   { name: 'Inline field title', value: 'Some value here', inline: true },
+    //   { name: 'Inline field title', value: 'Some value here', inline: true },
+    // )
+    //.addField('Inline field title', 'Some value here', true)
+    .setImage(videoDetails.thumbnails.slice(-1)[0].url)
+    //.setTimestamp()
+    //.setFooter('Some footer text here', 'https://i.imgur.com/AfFp7pu.png');
+  
+    return embed
 }
 
 client.login(token);
