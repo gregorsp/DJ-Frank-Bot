@@ -31,13 +31,13 @@ client.once("disconnect", () => {
 });
 
 client.on("message", async (message) => {
-  console.log(message);
+  //console.log(message);
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
 
   const serverQueue = queue.get(message.guild.id);
 
-  if (message.content.startsWith(`${prefix}play`)) {
+  if (message.content.startsWith(`${prefix}play`)|message.content.startsWith(`${prefix}p`)) {
     execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(`${prefix}skip`)) {
