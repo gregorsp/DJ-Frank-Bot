@@ -237,7 +237,7 @@ const getMusicEmbed = (videoDetails) => {
     .setTitle(videoDetails.title)
     .setURL(videoDetails.video_url)
     .setAuthor(author, videoDetails.author.thumbnails.slice(-1)[0].url, videoDetails.author.user_url)
-    //.setDescription('Some description here')
+    .setDescription(videoDetails.description)
     //.setThumbnail(videoDetails.thumbnails.slice(-1)[0].url)
     // .addFields(
     //   { name: 'Regular field title', value: 'Some value here' },
