@@ -37,7 +37,7 @@ client.on("message", async (message) => {
 
   const serverQueue = queue.get(message.guild.id);
 
-  if (message.content.startsWith(`${prefix}play`)|message.content.startsWith(`${prefix}p`)) {
+  if (message.content.startsWith(`${prefix}play `)|message.content.startsWith(`${prefix}p `)) {
     execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(`${prefix}skip`)) {
@@ -49,6 +49,8 @@ client.on("message", async (message) => {
   } else if (message.content.startsWith(`${prefix}say`)) {
     say(message);
     return;
+  } else if (message.content.startsWith(`${prefix}playlist`)) {
+    playlist(message, serverQueue);
   }
   // else {
   //     message.channel.send("You need to enter a valid command!");
@@ -105,7 +107,7 @@ const getInfo2 = async (arg) => {
     return await ytdl.getInfo(arg);
   //TODO: handle youtube searcher
   } else {
-    let liste = await youtubesearchapi.GetListByKeyword(arg, false);
+    let liste = await youtubesearchapi.GetListByKeyword(arg, true);
     const url = "https://www.youtube.com/watch?v=" + liste.items[0].id;
 
     return await ytdl.getInfo(url);
@@ -158,11 +160,23 @@ async function execute(message, serverQueue) {
     queue.set(message.guild.id, queueContruct);
 
     queueContruct.songs.push(song);
-
+    errCounter = 0;
     try {
-      var connection = await voiceChannel.join();
-      queueContruct.connection = connection;
-      play(message.guild, queueContruct.songs[0]);
+      while (errCounter < 3) {
+        try {
+          var connection = await voiceChannel.join();
+          queueContruct.connection = connection;
+          play(message.guild, queueContruct.songs[0]);
+          errCounter = 10000;
+        } catch(err) {
+          if (errCounter == 3) {
+            throw (err)
+          }
+          console.log(err);
+
+          errCounter++;
+        }
+      }
     } catch (err) {
       console.log(err);
       queue.delete(message.guild.id);
@@ -207,7 +221,7 @@ function play(guild, song) {
     .on("error", (error) => { 
       console.error(error);
       serverQueue.textChannel.send("Fehler beim abspielen:\n"+error);
-      serverQueue.songs.shift();
+      // serverQueue.songs.shift();
       play(guild, serverQueue.songs[0]);});
   dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
   serverQueue.textChannel.send(`Jetzt: **${song.title}**`);
@@ -216,6 +230,64 @@ function play(guild, song) {
   if (Math.random()*5 <1 ) {
     serverQueue.textChannel.send(`Den Song mag ich besonders gern!`);
   }
+}
+
+async function playlist(message, serverQueue) {
+  const args = message.content.split(" ");
+
+  const voiceChannel = message.member.voice.channel;
+  if (!voiceChannel) return message.channel.send("Du bist in keinem Voice.");
+  const permissions = voiceChannel.permissionsFor(message.client.user);
+  if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+    return message.channel.send("Mir fehlen Rechte!");
+  }
+
+  const playlistInfo = await getPlaylistInfo(args.slice(1).join(" "));
+  console.log(playlistInfo)
+  if (!serverQueue) {
+    const queueContruct = {
+      textChannel: message.channel,
+      voiceChannel: message.member.voice.channel,
+      connection: null,
+      songs: [],
+      volume: 5,
+      playing: true,
+    };
+
+    queue.set(message.guild.id, queueContruct);
+    serverQueue = queue.get(message.guild.id);
+  }
+  for (let i = 0; i < playlistInfo.length; i++) {
+    await addToQueue(playlistInfo[i].id, serverQueue, message);
+  }
+  
+  console.log(serverQueue.songs);
+  //...
+}
+
+const getPlaylistInfo = async (arg) => {
+  if (isValidHttpUrl(arg)) {
+    let liste = await (await youtubesearchapi.GetPlaylistData(arg.split("=")[1])).items
+    //const url = "https://www.youtube.com/watch?v=" + liste.items[0].id;
+    console.log(liste);
+    return await liste;//ytdl.getInfo(url);
+  }
+}
+
+async function addToQueue(id, serverQueue, message){
+  arg = "https://www.youtube.com/watch?v=" + id
+
+  const songInfo = await getInfo3(arg);
+  const song = {
+    title: songInfo.videoDetails.title,
+    url: songInfo.videoDetails.video_url,
+    videoDetails: songInfo.videoDetails,
+  };
+
+
+  serverQueue.songs.push(song);
+  return message.channel.send(`${song.title} wurde zur Queue hinzugefügt!`);
+
 }
 
 const say = (message) => {
@@ -237,7 +309,7 @@ const getMusicEmbed = (videoDetails) => {
     .setTitle(videoDetails.title)
     .setURL(videoDetails.video_url)
     .setAuthor(author, videoDetails.author.thumbnails.slice(-1)[0].url, videoDetails.author.user_url)
-    .setDescription(videoDetails.description)
+    //.setDescription(videoDetails.description)
     //.setThumbnail(videoDetails.thumbnails.slice(-1)[0].url)
     // .addFields(
     //   { name: 'Regular field title', value: 'Some value here' },
