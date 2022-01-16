@@ -14,8 +14,6 @@ const queueDelete = (guildId) => {
   return queue.delete(guildId);
 };
 
-const queueCommands = { queueGet, queueGet, queueDelete };
-
 async function queueAdd(id, serverQueue, message) {
   arg = "https://www.youtube.com/watch?v=" + id;
 
@@ -30,4 +28,13 @@ async function queueAdd(id, serverQueue, message) {
   return sender.sendAddedToQueue(message.channel, song);
 }
 
-module.exports = { queue, queueSet, queueGet, queueDelete, queueAdd };
+const queueCommands = { queueGet, queueSet, queueDelete, queueAdd };
+
+module.exports = {
+  queue,
+  queueSet,
+  queueGet,
+  queueDelete,
+  queueAdd,
+  queueCommands,
+};

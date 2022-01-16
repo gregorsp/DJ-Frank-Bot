@@ -2,8 +2,8 @@ const search = require("./search.js");
 
 const sender = require("./sender.js");
 const helper = require("./helper.js");
-const player = require("./player.js")
-async function execute(message, serverQueue, queueGet, queueSet, queueDelete) {
+const player = require("./player.js");
+async function play(message, serverQueue, queueCommands) {
   const args = message.content.split(" ");
 
   const voiceChannel = message.member.voice.channel;
@@ -20,14 +20,9 @@ async function execute(message, serverQueue, queueGet, queueSet, queueDelete) {
   const song = helper.songInfoToSongObject(songInfo);
 
   if (!serverQueue) {
-    serverQueue = helper.setServerQueue(
-      queueSet,
-      queueGet,
-      message.guild.id,
-      message
-    );
+    serverQueue = helper.setServerQueue(queueCommands, message);
     serverQueue.songs.push(song);
-    player.tryPlay(voiceChannel, serverQueue, message, queueGet, queueDelete);
+    player.tryPlay(voiceChannel, serverQueue, message, queueCommands);
   } else {
     serverQueue.songs.push(song);
     return message.channel.send(`${song.title} wurde zur Queue hinzugefügt!`);
@@ -51,7 +46,7 @@ function stop(message, serverQueue) {
   serverQueue.connection.dispatcher.end();
 }
 
-async function playlist(message, serverQueue, queueSet, queueGet, queueAdd, queueDelete) {
+async function playlist(message, serverQueue, queueCommands) {
   const args = message.content.split(" ");
 
   const voiceChannel = message.member.voice.channel;
@@ -63,16 +58,16 @@ async function playlist(message, serverQueue, queueSet, queueGet, queueAdd, queu
 
   const playlistInfo = await search.getPlaylistInfo(args.slice(1).join(" "));
   console.log(playlistInfo);
-  var emptyQueue = false
+  var emptyQueue = false;
   if (!serverQueue) {
-    serverQueue = helper.setServerQueue(queueSet, queueGet, message.guild.id, message);
-    emptyQueue = true
+    serverQueue = helper.setServerQueue(queueCommands, message);
+    emptyQueue = true;
   }
   for (let i = 0; i < playlistInfo.length; i++) {
-    await queueAdd(playlistInfo[i].id, serverQueue, message);
+    await queueCommands.queueAdd(playlistInfo[i].id, serverQueue, message);
   }
   if (emptyQueue) {
-    player.tryPlay(voiceChannel, serverQueue, message, queueGet, queueDelete);
+    player.tryPlay(voiceChannel, serverQueue, message, queueCommands);
   }
   console.log(serverQueue.songs);
   //...
@@ -82,4 +77,4 @@ const say = (message) => {
   sender.sayCommand(message);
 };
 
-module.exports = { execute, skip, stop, playlist, say };
+module.exports = { play, skip, stop, playlist, say };

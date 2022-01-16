@@ -12,7 +12,7 @@ function isValidHttpUrl(string) {
   return url.protocol === "http:" || url.protocol === "https:";
 }
 
-const setServerQueue = (queueSet, queueGet, guildId, message) => {
+const setServerQueue = (queueCommands, message) => {
   const queueContruct = {
     textChannel: message.channel,
     voiceChannel: message.member.voice.channel,
@@ -22,8 +22,8 @@ const setServerQueue = (queueSet, queueGet, guildId, message) => {
     playing: true,
   };
 
-  queueSet(guildId, queueContruct);
-  return queueGet(guildId);
+  queueCommands.queueSet(message.guild.id, queueContruct);
+  return queueCommands.queueGet(message.guild.id);
 };
 
 const songInfoToSongObject = (songInfo) => {
@@ -32,6 +32,6 @@ const songInfoToSongObject = (songInfo) => {
     url: songInfo.videoDetails.video_url,
     videoDetails: songInfo.videoDetails,
   };
-}
+};
 
 module.exports = { isValidHttpUrl, setServerQueue, songInfoToSongObject };

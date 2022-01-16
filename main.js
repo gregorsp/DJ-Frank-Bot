@@ -35,25 +35,22 @@ client.on("message", async (message) => {
     message.content.startsWith(`${prefix}play `) |
     message.content.startsWith(`${prefix}p `)
   ) {
-    commands.execute(
-      message,
-      serverQueue,
-      queuer.queueGet,
-      queuer.queueSet,
-      queuer.queueDelete
-    );
+    commands.play(message, serverQueue, queuer.queueCommands);
     return;
   } else if (message.content.startsWith(`${prefix}skip`)) {
     commands.skip(message, serverQueue);
     return;
-  } else if (message.content.startsWith(`${prefix}stop`)) {
+  } else if (
+    message.content.startsWith(`${prefix}stop`) |
+    message.content.startsWith(`${prefix}leave`)
+  ) {
     commands.stop(message, serverQueue);
     return;
   } else if (message.content.startsWith(`${prefix}say`)) {
     commands.say(message);
     return;
   } else if (message.content.startsWith(`${prefix}playlist`)) {
-    commands.playlist(message, serverQueue, queuer.queueSet, queuer.queueGet, queuer.queueAdd, queuer.queueDelete);
+    commands.playlist(message, serverQueue, queuer.queueCommands);
     return;
   }
   // else {
