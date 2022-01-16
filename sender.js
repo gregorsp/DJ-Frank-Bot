@@ -1,4 +1,4 @@
-const { Client, Intents, MessageEmbed } = require("discord.js");
+const {MessageEmbed } = require("discord.js");
 
 const getMusicEmbed = (videoDetails) => {
   console.log(videoDetails);

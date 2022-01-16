@@ -1,5 +1,3 @@
-const search = require("./search.js");
-
 function isValidHttpUrl(string) {
   let url;
 
