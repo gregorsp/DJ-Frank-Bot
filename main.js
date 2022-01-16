@@ -1,12 +1,12 @@
-const { Client, Intents} = require("discord.js");
+const { Client, Intents } = require("discord.js");
 const util = require("util");
 const fs = require("fs");
 
 const token = "ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJeg.Ob5X9LtzF0Nb7acgyM3UVm_2WgE";
 const prefix = ".";
 
-const commands=require("./commands.js")
-const queuer = require("./queuer.js")
+const commands = require("./commands.js");
+const queuer = require("./queuer.js");
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
@@ -35,7 +35,13 @@ client.on("message", async (message) => {
     message.content.startsWith(`${prefix}play `) |
     message.content.startsWith(`${prefix}p `)
   ) {
-    commands.execute(message, serverQueue, queuer.queueGet, queuer.queueSet, queuer.queueDelete);
+    commands.execute(
+      message,
+      serverQueue,
+      queuer.queueGet,
+      queuer.queueSet,
+      queuer.queueDelete
+    );
     return;
   } else if (message.content.startsWith(`${prefix}skip`)) {
     commands.skip(message, serverQueue);

@@ -1,5 +1,4 @@
-const search = require("./search.js")
-
+const search = require("./search.js");
 
 function isValidHttpUrl(string) {
   let url;
@@ -14,18 +13,17 @@ function isValidHttpUrl(string) {
 }
 
 const setServerQueue = (queueSet, queueGet, guildId, message) => {
-    const queueContruct = {
-        textChannel: message.channel,
-        voiceChannel: message.member.voice.channel,
-        connection: null,
-        songs: [],
-        volume: 5,
-        playing: true,
-      };
-  
-      queueSet(guildId, queueContruct);
-      return queueGet(guildId);
-}
+  const queueContruct = {
+    textChannel: message.channel,
+    voiceChannel: message.member.voice.channel,
+    connection: null,
+    songs: [],
+    volume: 5,
+    playing: true,
+  };
 
+  queueSet(guildId, queueContruct);
+  return queueGet(guildId);
+};
 
-module.exports = {isValidHttpUrl, setServerQueue}
+module.exports = { isValidHttpUrl, setServerQueue };

@@ -1,12 +1,12 @@
-const helper = require("./helper")
+const helper = require("./helper");
 
 const ytdl = require("ytdl-core");
 const YTF = require("youtube-finder");
 const ytMusic = require("node-youtube-music");
 const youtubesearchapi = require("youtube-search-api");
 const ytclient = YTF.createClient({
-    key: "AIzaSyC-sh8qoiYS1hIw2eauhjJmAF_1L_AKZ7k",
-  });
+  key: "AIzaSyC-sh8qoiYS1hIw2eauhjJmAF_1L_AKZ7k",
+});
 
 const getInfo = async (arg) => {
   arg += " lyrics -live -karaoke";
@@ -54,7 +54,7 @@ const getInfo2 = async (arg) => {
   }
 };
 
-const getInfo3 = async (arg) => {
+const getSongInfo = async (arg) => {
   //arg += ' lyrics -live -karaoke';
   if (helper.isValidHttpUrl(arg)) {
     return await ytdl.getInfo(arg);
@@ -68,12 +68,14 @@ const getInfo3 = async (arg) => {
 };
 
 const getPlaylistInfo = async (arg) => {
-    if (helper.isValidHttpUrl(arg)) {
-      let liste = await (await youtubesearchapi.GetPlaylistData(arg.split("=")[1])).items
-      //const url = "https://www.youtube.com/watch?v=" + liste.items[0].id;
-      console.log(liste);
-      return await liste;//ytdl.getInfo(url);
-    }
+  if (helper.isValidHttpUrl(arg)) {
+    let liste = await (
+      await youtubesearchapi.GetPlaylistData(arg.split("=")[1])
+    ).items;
+    //const url = "https://www.youtube.com/watch?v=" + liste.items[0].id;
+    console.log(liste);
+    return await liste; //ytdl.getInfo(url);
   }
+};
 
-module.exports = { getInfo3, getPlaylistInfo };
+module.exports = { getSongInfo, getPlaylistInfo };

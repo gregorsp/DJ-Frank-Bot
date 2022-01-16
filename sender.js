@@ -34,17 +34,22 @@ const getMusicEmbed = (videoDetails) => {
 };
 
 const sendSongToChat = (serverQueue, song) => {
-    serverQueue.textChannel.send(`Jetzt: **${song.title}**`);
-    serverQueue.textChannel.send(getMusicEmbed(song.videoDetails));
-  
-    if (Math.random() * 5 < 1) {
-      serverQueue.textChannel.send(`Den Song mag ich besonders gern!`);
-    }
-}
-const sayCommand = (message) => {
-    const answer = message.content.slice(5);
-    message.channel.send(answer);
-    message.delete();
-}
+  serverQueue.textChannel.send(`Jetzt: **${song.title}**`);
+  serverQueue.textChannel.send(getMusicEmbed(song.videoDetails));
 
-module.exports = {sendSongToChat, sayCommand}
+  if (Math.random() * 5 < 1) {
+    serverQueue.textChannel.send(`Den Song mag ich besonders gern!`);
+  }
+};
+
+const sendAddedToQueue = (channel, song) => {
+  return channel.send(`${song.title} wurde zur Queue hinzugefügt!`);
+};
+
+const sayCommand = (message) => {
+  const answer = message.content.slice(5);
+  message.channel.send(answer);
+  message.delete();
+};
+
+module.exports = { sendSongToChat, sayCommand, sendAddedToQueue };

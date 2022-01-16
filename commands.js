@@ -2,7 +2,7 @@ const search = require("./search.js");
 const ytdl = require("ytdl-core");
 
 const sender = require("./sender.js");
-const helper = require("./helper.js")
+const helper = require("./helper.js");
 async function execute(message, serverQueue, queueGet, queueSet, queueDelete) {
   const args = message.content.split(" ");
 
@@ -15,7 +15,7 @@ async function execute(message, serverQueue, queueGet, queueSet, queueDelete) {
 
   //const songInfo = await ytdl.getInfo(args[1]);
   //const songInfo = await getInfo(args.slice(1).join(" "));
-  const songInfo = await search.getInfo3(args.slice(1).join(" "));
+  const songInfo = await search.getSongInfo(args.slice(1).join(" "));
   //console.log(songInfo2);
   const song = {
     title: songInfo.videoDetails.title,
@@ -24,7 +24,12 @@ async function execute(message, serverQueue, queueGet, queueSet, queueDelete) {
   };
 
   if (!serverQueue) {
-    serverQueue = helper.setServerQueue(queueSet, queueGet, message.guild.id, message)
+    serverQueue = helper.setServerQueue(
+      queueSet,
+      queueGet,
+      message.guild.id,
+      message
+    );
     serverQueue.songs.push(song);
     errCounter = 0;
     try {
@@ -106,7 +111,9 @@ async function playlist(message, serverQueue, queueAdd) {
 
   const playlistInfo = await search.getPlaylistInfo(args.slice(1).join(" "));
   console.log(playlistInfo);
-  if (!serverQueue) {helper.setServerQueue(queueSet, queueGet, message.guild.id, message)}
+  if (!serverQueue) {
+    helper.setServerQueue(queueSet, queueGet, message.guild.id, message);
+  }
   for (let i = 0; i < playlistInfo.length; i++) {
     await queueAdd(playlistInfo[i].id, serverQueue, message);
   }
@@ -118,6 +125,5 @@ async function playlist(message, serverQueue, queueAdd) {
 const say = (message) => {
   sender.sayCommand(message);
 };
-
 
 module.exports = { execute, skip, stop, playlist, say };
