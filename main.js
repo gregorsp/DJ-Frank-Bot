@@ -53,7 +53,7 @@ client.on("message", async (message) => {
     commands.say(message);
     return;
   } else if (message.content.startsWith(`${prefix}playlist`)) {
-    commands.playlist(message, serverQueue, queuer.queueAdd);
+    commands.playlist(message, serverQueue, queuer.queueSet, queuer.queueGet, queuer.queueAdd, queuer.queueDelete);
     return;
   }
   // else {

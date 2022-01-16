@@ -26,4 +26,12 @@ const setServerQueue = (queueSet, queueGet, guildId, message) => {
   return queueGet(guildId);
 };
 
-module.exports = { isValidHttpUrl, setServerQueue };
+const songInfoToSongObject = (songInfo) => {
+  return {
+    title: songInfo.videoDetails.title,
+    url: songInfo.videoDetails.video_url,
+    videoDetails: songInfo.videoDetails,
+  };
+}
+
+module.exports = { isValidHttpUrl, setServerQueue, songInfoToSongObject };

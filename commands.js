@@ -1,8 +1,8 @@
 const search = require("./search.js");
-const ytdl = require("ytdl-core");
 
 const sender = require("./sender.js");
 const helper = require("./helper.js");
+const player = require("./player.js")
 async function execute(message, serverQueue, queueGet, queueSet, queueDelete) {
   const args = message.content.split(" ");
 
@@ -17,11 +17,7 @@ async function execute(message, serverQueue, queueGet, queueSet, queueDelete) {
   //const songInfo = await getInfo(args.slice(1).join(" "));
   const songInfo = await search.getSongInfo(args.slice(1).join(" "));
   //console.log(songInfo2);
-  const song = {
-    title: songInfo.videoDetails.title,
-    url: songInfo.videoDetails.video_url,
-    videoDetails: songInfo.videoDetails,
-  };
+  const song = helper.songInfoToSongObject(songInfo);
 
   if (!serverQueue) {
     serverQueue = helper.setServerQueue(
@@ -31,28 +27,7 @@ async function execute(message, serverQueue, queueGet, queueSet, queueDelete) {
       message
     );
     serverQueue.songs.push(song);
-    errCounter = 0;
-    try {
-      while (errCounter < 3) {
-        try {
-          var connection = await voiceChannel.join();
-          serverQueue.connection = connection;
-          play(message.guild, serverQueue.songs[0], queueGet, queueDelete);
-          errCounter = 10000;
-        } catch (err) {
-          if (errCounter == 3) {
-            throw err;
-          }
-          console.log(err);
-
-          errCounter++;
-        }
-      }
-    } catch (err) {
-      console.log(err);
-      queueDelete(message.guild.id);
-      return message.channel.send(err);
-    }
+    player.tryPlay(voiceChannel, serverQueue, message, queueGet, queueDelete);
   } else {
     serverQueue.songs.push(song);
     return message.channel.send(`${song.title} wurde zur Queue hinzugefügt!`);
@@ -75,31 +50,8 @@ function stop(message, serverQueue) {
   serverQueue.songs = [];
   serverQueue.connection.dispatcher.end();
 }
-function play(guild, song, queueGet, queueDelete) {
-  const serverQueue = queueGet(guild.id);
-  if (!song) {
-    serverQueue.voiceChannel.leave();
-    queueDelete(guild.id);
-    return;
-  }
 
-  const dispatcher = serverQueue.connection
-    .play(ytdl(song.url, { quality: "highestaudio", highWaterMark: 1 << 25 }))
-    .on("finish", () => {
-      serverQueue.songs.shift();
-      play(guild, serverQueue.songs[0], queueGet, queueDelete);
-    })
-    .on("error", (error) => {
-      console.error(error);
-      serverQueue.textChannel.send("Fehler beim abspielen:\n" + error);
-      // serverQueue.songs.shift();
-      play(guild, serverQueue.songs[0]);
-    });
-  dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-  sender.sendSongToChat(serverQueue, song);
-}
-
-async function playlist(message, serverQueue, queueAdd) {
+async function playlist(message, serverQueue, queueSet, queueGet, queueAdd, queueDelete) {
   const args = message.content.split(" ");
 
   const voiceChannel = message.member.voice.channel;
@@ -111,13 +63,17 @@ async function playlist(message, serverQueue, queueAdd) {
 
   const playlistInfo = await search.getPlaylistInfo(args.slice(1).join(" "));
   console.log(playlistInfo);
+  var emptyQueue = false
   if (!serverQueue) {
-    helper.setServerQueue(queueSet, queueGet, message.guild.id, message);
+    serverQueue = helper.setServerQueue(queueSet, queueGet, message.guild.id, message);
+    emptyQueue = true
   }
   for (let i = 0; i < playlistInfo.length; i++) {
     await queueAdd(playlistInfo[i].id, serverQueue, message);
   }
-
+  if (emptyQueue) {
+    player.tryPlay(voiceChannel, serverQueue, message, queueGet, queueDelete);
+  }
   console.log(serverQueue.songs);
   //...
 }
