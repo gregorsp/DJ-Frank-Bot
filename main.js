@@ -2,7 +2,7 @@ const { Client, Intents } = require("discord.js");
 const util = require("util");
 const fs = require("fs");
 
-const token = "ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJeg.Ob5X9LtzF0Nb7acgyM3UVm_2WgE";
+const token = fs.readFileSync("./discordtoken", "utf8"); //"ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJeg.Ob5X9LtzF0Nb7acgyM3UVm_2WgE";
 const prefix = ".";
 
 const commands = require("./commands.js");
