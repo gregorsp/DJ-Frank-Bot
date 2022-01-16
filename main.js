@@ -24,37 +24,35 @@ client.once("disconnect", () => {
 });
 
 client.on("message", async (message) => {
-  //console.log(message);
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
 
   var serverQueue = queuer.queueGet(message.guild.id);
 
-  if (
-    message.content.startsWith(`${prefix}play `) |
-    message.content.startsWith(`${prefix}p `)
-  ) {
-    commands.play(message, serverQueue, queuer.queueCommands);
-    return;
-  } else if (message.content.startsWith(`${prefix}skip`)) {
-    commands.skip(message, serverQueue);
-    return;
-  } else if (
-    message.content.startsWith(`${prefix}stop`) |
-    message.content.startsWith(`${prefix}leave`)
-  ) {
-    commands.stop(message, serverQueue);
-    return;
-  } else if (message.content.startsWith(`${prefix}say`)) {
-    commands.say(message);
-    return;
-  } else if (message.content.startsWith(`${prefix}playlist`)) {
-    commands.playlist(message, serverQueue, queuer.queueCommands);
-    return;
+  const command = message.content.slice(prefix.length).split(" ")[0];
+  switch (command) {
+    case "p":
+    case "play":
+      commands.play(message, serverQueue, queuer.queueCommands);
+      break;
+    case "playlist":
+      commands.playlist(message, serverQueue, queuer.queueCommands);
+      break;
+    case "s":
+    case "skip":
+      commands.skip(message, serverQueue);
+      break;
+    case "stop":
+    case "leave":
+    case "disconnect":
+      commands.stop(message, serverQueue);
+      break;
+    case "say":
+      commands.say(message);
+      break;
+    default:
+      break;
   }
-  // else {
-  //     message.channel.send("You need to enter a valid command!");
-  // }
-}); /** */
+});
 
 client.login(token);
