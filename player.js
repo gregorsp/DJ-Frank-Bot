@@ -7,6 +7,9 @@ async function tryPlay(voiceChannel, serverQueue, message, queueCommands) {
     while (errCounter < 3) {
       try {
         var connection = await voiceChannel.join();
+        connection.on("disconnect", (event) => {
+          queueCommands.queueDelete(message.guild.id);
+        })
         serverQueue.connection = connection;
         play(message.guild, serverQueue.songs[0], queueCommands);
         errCounter = 10000;
