@@ -12,7 +12,7 @@ const getSongInfo = async (arg) => {
   } else {
     let liste = await ytMusic.searchMusics(arg);
     if (liste.length == 0) {
-      liste = await ytMusic.searchMusics("never gonna give you up");
+      return await ytdl.getInfo("https://www.youtube.com/watch?v=lYBUbBu4W08");
     }
     let url = "https://www.youtube.com/watch?v=" + liste[0].youtubeId;
     return await ytdl.getInfo(url);
