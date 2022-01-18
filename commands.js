@@ -2,6 +2,7 @@ const search = require("./search.js");
 const sender = require("./sender.js");
 const helper = require("./helper.js");
 const player = require("./player.js");
+const spoti  = require("./spotify.js")
 
 async function play(message, serverQueue, queueCommands) {
   const args = message.content.split(" ");
@@ -77,4 +78,8 @@ const say = (message) => {
   sender.sayCommand(message);
 };
 
-module.exports = { play, skip, stop, playlist, say };
+const spotify = async (message) => {
+  return await spoti.test(message)
+}
+
+module.exports = { play, skip, stop, playlist, say, spotify };

@@ -50,6 +50,13 @@ client.on("message", async (message) => {
     case "say":
       commands.say(message);
       break;
+    case "random":
+    case "spotify":
+      var title = await commands.spotify(message);
+      message.content = ".p " + title
+      // message.reply(message.content)
+      commands.play(message, serverQueue, queuer.queueCommands)
+      break;
     default:
       break;
   }
