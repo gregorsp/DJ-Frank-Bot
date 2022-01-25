@@ -5,8 +5,6 @@ const request = require("request");
 const id = "a97738f2a1ba46aa9386d2f7f351dec5";
 const secret = fs.readFileSync("./spotifysecret", "utf8");
 
-let tracks = [];
-
 var api = new SpotifyWebApi({
   clientId: id,
   clientSecret: secret,
@@ -47,25 +45,30 @@ function doRequest(url) {
   });
 }
 
-const test = async (message) => {
-  if (tracks.length == 0) {
-    api.setAccessToken(await getAccesToken());
-    var liste = await api.getPlaylist("30YalNqYddehoSL44yETCo"); //https://open.spotify.com/playlist/30YalNqYddehoSL44yETCo?si=e7f2c7e83eef45f7
-    var length = liste.body.tracks.total;
-    tracks = [];
-    for (var i = 0; i < length; i = i + 100) {
-      tracks.push.apply(
-        tracks,
-        (
-          await api.getPlaylistTracks("30YalNqYddehoSL44yETCo", {
-            offset: i,
-            limit: 100,
-          })
-        ).body.items
-      );
-    }
+const GetRandomSongsFromPlaylist = async (
+  playlistId = "30YalNqYddehoSL44yETCo",
+  amount = 1
+  ) => {
+  api.setAccessToken(await getAccesToken());
+  retval = [];
+  var liste = await api.getPlaylist(playlistId); //https://open.spotify.com/playlist/30YalNqYddehoSL44yETCo?si=e7f2c7e83eef45f7
+  var length = liste.body.tracks.total;
+  let tracks = [];
+  for (var i = 0; i < length; i = i + 100) {
+    tracks.push.apply(
+      tracks,
+      (
+        await api.getPlaylistTracks(playlistId, {
+          offset: i,
+          limit: 100,
+        })
+      ).body.items
+    );
   }
-  return apiTrackToText(tracks[Math.floor(Math.random() * tracks.length)]);
+  for (let i = 0; i < amount & i < 20; i++) {
+    retval.push(apiTrackToText(tracks[Math.floor(Math.random() * tracks.length)]))
+  }
+  return retval;
 };
 
 const apiTrackToText = (track) => {
@@ -73,4 +76,4 @@ const apiTrackToText = (track) => {
   var title = track.track.name;
   return artist + " - " + title;
 };
-module.exports = { test };
+module.exports = { GetRandomSongsFromPlaylist };

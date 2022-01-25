@@ -6,6 +6,7 @@ const prefix = ".";
 
 const commands = require("./commands.js");
 const queuer = require("./queuer.js");
+const helper = require("./helper.js");
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
@@ -51,11 +52,18 @@ client.on("message", async (message) => {
       commands.say(message);
       break;
     case "random":
+      var titles = await commands.spotify("30YalNqYddehoSL44yETCo", helper.getNthWord(message.content, 2));
+      for (let i = 0; i < titles.length; i++){
+        message.content = ".p " + titles[i]
+        // message.reply(message.content)
+        serverQueue = queuer.queueGet(message.guild.id);
+
+        await commands.play(message, serverQueue, queuer.queueCommands)
+      }
+      break;
     case "spotify":
-      var title = await commands.spotify(message);
-      message.content = ".p " + title
-      // message.reply(message.content)
-      commands.play(message, serverQueue, queuer.queueCommands)
+      var titles = await commands.spotify(message);
+      
       break;
     default:
       break;

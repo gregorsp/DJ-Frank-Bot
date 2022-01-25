@@ -32,4 +32,8 @@ const songInfoToSongObject = (songInfo) => {
   };
 };
 
-module.exports = { isValidHttpUrl, setServerQueue, songInfoToSongObject };
+const getNthWord = (text, n) => {
+  return text.split(" ")[n-1]
+}
+
+module.exports = { isValidHttpUrl, setServerQueue, songInfoToSongObject, getNthWord };

@@ -78,8 +78,8 @@ const say = (message) => {
   sender.sayCommand(message);
 };
 
-const spotify = async (message) => {
-  return await spoti.test(message)
+const spotify = async (playlistId, amount) => {
+  return await spoti.GetRandomSongsFromPlaylist(playlistId, amount)
 }
 
 module.exports = { play, skip, stop, playlist, say, spotify };
