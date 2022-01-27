@@ -52,7 +52,8 @@ client.on("message", async (message) => {
       commands.say(message);
       break;
     case "random":
-      var titles = await commands.spotify("30YalNqYddehoSL44yETCo", helper.getNthWord(message.content, 2));
+      var length = message.content.length > 8 ? helper.getNthWord(message.content, 2) : 1
+      var titles = await commands.spotify("30YalNqYddehoSL44yETCo", length);
       for (let i = 0; i < titles.length; i++){
         message.content = ".p " + titles[i]
         // message.reply(message.content)
