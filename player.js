@@ -9,6 +9,7 @@ async function tryPlay(voiceChannel, serverQueue, message, queueCommands) {
         var connection = await voiceChannel.join();
         connection.on("disconnect", (event) => {
           queueCommands.queueDelete(message.guild.id);
+          message.channel.send("Die Party ist vorbei!")
         })
         serverQueue.connection = connection;
         play(message.guild, serverQueue.songs[0], queueCommands);
