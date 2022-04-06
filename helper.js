@@ -36,4 +36,13 @@ const getNthWord = (text, n) => {
   return text.split(" ")[n-1]
 }
 
-module.exports = { isValidHttpUrl, setServerQueue, songInfoToSongObject, getNthWord };
+const getSpotifyPlaylistId = (link) => {
+  // https://open.spotify.com/playlist/7ktaQvt898S3BYWkO90gFu?si=54b6547bf49a4d87
+  var a = link.split("/");
+  var b = a.slice(-1)[0];
+  var c = b.split("?");
+  var d = c.slice(0)[0];
+  return d;
+}
+
+module.exports = { isValidHttpUrl, setServerQueue, songInfoToSongObject, getNthWord, getSpotifyPlaylistId };

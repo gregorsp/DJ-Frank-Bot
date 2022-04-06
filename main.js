@@ -39,12 +39,13 @@ client.on("message", async (message) => {
     case "playlist":
       commands.playlist(message, serverQueue, queuer.queueCommands);
       break;
-    case "s":
     case "skip":
+    case "next":
       commands.skip(message, serverQueue);
       break;
     case "stop":
     case "leave":
+    case "quit":
     case "disconnect":
       commands.stop(message, serverQueue);
       break;
@@ -62,9 +63,26 @@ client.on("message", async (message) => {
         await commands.play(message, serverQueue, queuer.queueCommands)
       }
       break;
+    case "s":
     case "spotify":
-      var titles = await commands.spotify(message);
-      
+      var spotLink = helper.getNthWord(message.content, 2);
+      var spotId = helper.getSpotifyPlaylistId(spotLink);
+      var count = 1;
+      try {
+        count = helper.getNthWord(message.content, 3);
+      }
+      catch {
+
+      }
+
+      var titles = await commands.spotify(spotId, count);
+      for (let i = 0; i < titles.length; i++){
+        message.content = ".p " + titles[i]
+        // message.reply(message.content)
+        serverQueue = queuer.queueGet(message.guild.id);
+
+        await commands.play(message, serverQueue, queuer.queueCommands)
+      }
       break;
     default:
       break;
