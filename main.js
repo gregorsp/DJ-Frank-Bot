@@ -34,6 +34,7 @@ client.on("message", async (message) => {
   switch (command) {
     case "p":
     case "play":
+      if (message.length >= 6) return;
       commands.play(message, serverQueue, queuer.queueCommands);
       break;
     case "playlist":
@@ -41,6 +42,7 @@ client.on("message", async (message) => {
       break;
     case "skip":
     case "next":
+    case "s":
       commands.skip(message, serverQueue);
       break;
     case "stop":
@@ -51,6 +53,10 @@ client.on("message", async (message) => {
       break;
     case "say":
       commands.say(message);
+      break;
+    case "repo":
+      let link =  "https://www.github.com/gregorsp/DJ-Frank-Bot"
+      message.reply(link);
       break;
     case "random":
       var length = message.content.length > 8 ? helper.getNthWord(message.content, 2) : 1
@@ -63,7 +69,6 @@ client.on("message", async (message) => {
         await commands.play(message, serverQueue, queuer.queueCommands)
       }
       break;
-    case "s":
     case "spotify":
       var spotLink = helper.getNthWord(message.content, 2);
       var spotId = helper.getSpotifyPlaylistId(spotLink);
