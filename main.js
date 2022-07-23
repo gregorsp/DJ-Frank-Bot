@@ -59,6 +59,7 @@ client.on("message", async (message) => {
       message.reply(link);
       break;
     case "random":
+    case "r":
       var length = message.content.length > 8 ? helper.getNthWord(message.content, 2) : 1
       var titles = await commands.spotify("30YalNqYddehoSL44yETCo", length);
       for (let i = 0; i < titles.length; i++){
