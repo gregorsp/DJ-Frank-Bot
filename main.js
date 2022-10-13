@@ -61,6 +61,7 @@ client.on("message", async (message) => {
     case "random":
     case "r":
       var length = message.content.length > 8 ? helper.getNthWord(message.content, 2) : 1
+      if (length > 10) length = 10;
       var titles = await commands.spotify("30YalNqYddehoSL44yETCo", length);
       for (let i = 0; i < titles.length; i++){
         message.content = ".p " + titles[i]
