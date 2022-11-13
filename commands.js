@@ -82,4 +82,28 @@ const spotify = async (playlistId, amount) => {
   return await spoti.GetRandomSongsFromPlaylist(playlistId, amount)
 }
 
-module.exports = { play, skip, stop, playlist, say, spotify };
+const fabian = async (message, serverQueue, queueCommands, playlistId) => {
+  const args = message.content.split(" ");
+  var amount = args.slice(1)[0];
+  var interprets = args.slice(2).join(" ").split("|")
+
+  var matches = await spoti.GetMatchingSongsFromPlaylist(playlistId, interprets);
+  var toQueue = [];
+
+  if (amount >= matches.length) {
+    toQueue = matches;
+    for (let i = matches.length; i < amount; i++) {
+      // add a random entry of matches to toQueue
+      toQueue.push(matches[Math.floor(Math.random() * matches.length)]);
+    }
+  } else {
+    for (let i = 0; i < amount; i++) {
+      // add a random entry of matches to toQueue
+      toQueue.push(matches[Math.floor(Math.random() * matches.length)]);
+    }
+  }
+
+  return toQueue;
+}
+
+module.exports = { play, skip, stop, playlist, say, spotify, fabian };

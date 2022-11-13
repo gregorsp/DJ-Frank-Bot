@@ -76,4 +76,35 @@ const apiTrackToText = (track) => {
   var title = track.track.name;
   return artist + " - " + title;
 };
-module.exports = { GetRandomSongsFromPlaylist };
+
+const GetMatchingSongsFromPlaylist = async (playlistId = "30YalNqYddehoSL44yETCo", interprets) => {
+  api.setAccessToken(await getAccesToken());
+  retval = [];
+  var liste = await api.getPlaylist(playlistId); //https://open.spotify.com/playlist/30YalNqYddehoSL44yETCo?si=e7f2c7e83eef45f7
+  var length = liste.body.tracks.total;
+  let tracks = [];
+  for (var i = 0; i < length; i = i + 100) {
+    tracks.push.apply(
+      tracks,
+      (
+        await api.getPlaylistTracks(playlistId, {
+          offset: i,
+          limit: 100,
+        })
+      ).body.items
+    );
+  }
+  for (let i = 0; i < length; i++) {
+    var song = apiTrackToText(tracks[i]);
+    for (let j = 0; j < interprets.length; j++) {
+      var currentArtist = tracks[i].track.artists[0].name.toLowerCase();
+      console.log(currentArtist);
+      if (currentArtist.includes(interprets[j].toLowerCase())) {
+        retval.push(song);
+      }
+    }
+  }
+  return retval;
+}
+
+module.exports = { GetRandomSongsFromPlaylist, GetMatchingSongsFromPlaylist };

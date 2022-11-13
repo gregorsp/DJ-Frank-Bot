@@ -71,6 +71,16 @@ client.on("message", async (message) => {
         await commands.play(message, serverQueue, queuer.queueCommands)
       }
       break;
+    case "i":
+      var titles = await commands.fabian(message, serverQueue, queuer.queueCommands, "30YalNqYddehoSL44yETCo");
+      for (let i = 0; i < titles.length; i++){
+        message.content = ".p " + titles[i]
+        // message.reply(message.content)
+        serverQueue = queuer.queueGet(message.guild.id);
+
+        await commands.play(message, serverQueue, queuer.queueCommands)
+      }
+      break;
     case "spotify":
       var spotLink = helper.getNthWord(message.content, 2);
       var spotId = helper.getSpotifyPlaylistId(spotLink);
