@@ -73,6 +73,9 @@ client.on("message", async (message) => {
       break;
     case "i":
       var titles = await commands.fabian(message, serverQueue, queuer.queueCommands, "30YalNqYddehoSL44yETCo");
+      if (titles.length == 0) {
+        message.reply("Gibs keine Beweise");
+      }
       for (let i = 0; i < titles.length; i++){
         message.content = ".p " + titles[i]
         // message.reply(message.content)

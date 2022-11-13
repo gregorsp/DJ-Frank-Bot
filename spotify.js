@@ -98,9 +98,10 @@ const GetMatchingSongsFromPlaylist = async (playlistId = "30YalNqYddehoSL44yETCo
     var song = apiTrackToText(tracks[i]);
     for (let j = 0; j < interprets.length; j++) {
       var currentArtist = tracks[i].track.artists[0].name.toLowerCase();
-      console.log(currentArtist);
-      if (currentArtist.includes(interprets[j].toLowerCase())) {
+      var toFindArtist = interprets[j].toLowerCase().trim();
+      if (currentArtist.includes(toFindArtist)) {
         retval.push(song);
+        continue;
       }
     }
   }

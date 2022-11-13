@@ -89,18 +89,18 @@ const fabian = async (message, serverQueue, queueCommands, playlistId) => {
 
   var matches = await spoti.GetMatchingSongsFromPlaylist(playlistId, interprets);
   var toQueue = [];
-
+  if (matches.length == 0) return toQueue;
   if (amount >= matches.length) {
     toQueue = matches;
+    //shuffle toQueue
+    toQueue = toQueue.sort((a, b) => 0.5 - Math.random());
+
     for (let i = matches.length; i < amount; i++) {
       // add a random entry of matches to toQueue
       toQueue.push(matches[Math.floor(Math.random() * matches.length)]);
     }
   } else {
-    for (let i = 0; i < amount; i++) {
-      // add a random entry of matches to toQueue
-      toQueue.push(matches[Math.floor(Math.random() * matches.length)]);
-    }
+    toQueue = matches.sort((a, b) => 0.5 - Math.random()).slice(0, amount);
   }
 
   return toQueue;
