@@ -78,8 +78,8 @@ client.on("message", async (message) => {
       try {
         count = helper.getNthWord(message.content, 3);
       }
-      catch {
-
+      catch (ex) {
+        message.reply(ex);
       }
 
       var titles = await commands.spotify(spotId, count);
