@@ -80,7 +80,13 @@ const apiTrackToText = (track) => {
 const GetMatchingSongsFromPlaylist = async (playlistId = "30YalNqYddehoSL44yETCo", interprets) => {
   api.setAccessToken(await getAccesToken());
   retval = [];
-  var liste = await api.getPlaylist(playlistId); //https://open.spotify.com/playlist/30YalNqYddehoSL44yETCo?si=e7f2c7e83eef45f7
+  var liste = [];
+  try {
+
+    liste = await api.getPlaylist(playlistId); //https://open.spotify.com/playlist/30YalNqYddehoSL44yETCo?si=e7f2c7e83eef45f7
+  } catch (e) {
+    console.error(e);
+  }
   var length = liste.body.tracks.total;
   let tracks = [];
   for (var i = 0; i < length; i = i + 100) {

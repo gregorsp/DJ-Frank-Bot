@@ -7,7 +7,7 @@ const getMusicEmbed = (videoDetails, queue = []) => {
   if (author.endsWith(" - Topic")) {
     author = author.slice(0, author.length - 8);
   }
-  var count = queue.songs.length;
+  var count = queue.songs.length - 1;
   const embed = new MessageEmbed()
     .setColor("#0099ff")
     .setTitle(videoDetails.title)
