@@ -3,6 +3,7 @@ const sender = require("./sender.js");
 const helper = require("./helper.js");
 const player = require("./player.js");
 const spoti  = require("./spotify.js")
+const database = require("./database.js");
 
 async function play(message, serverQueue, queueCommands) {
   const args = message.content.split(" ");
@@ -105,5 +106,25 @@ const fabian = async (message, serverQueue, queueCommands, playlistId) => {
 
   return toQueue;
 }
+const debug = async (message, serverQueue, queueCommands) => {
+  const args = message.content.split(" ");
+  const amount = args.slice(1)[0];
+  const playlistId = args.slice(2)[0];
+  var matches = await database.getPlaylistFromDatabase(playlistId);
+  var toQueue = [];
+  if (amount >= matches.length) {
+    toQueue = matches;
+    //shuffle toQueue
+    toQueue = toQueue.sort((a, b) => 0.5 - Math.random());
 
-module.exports = { play, skip, stop, playlist, say, spotify, fabian };
+    for (let i = matches.length; i < amount; i++) {
+      // add a random entry of matches to toQueue
+      toQueue.push(matches[Math.floor(Math.random() * matches.length)]);
+    }
+  } else {
+    toQueue = matches.sort((a, b) => 0.5 - Math.random()).slice(0, amount);
+  }
+  return toQueue;
+}
+
+module.exports = { play, skip, stop, playlist, say, spotify, fabian, debug };

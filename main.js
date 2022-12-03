@@ -32,6 +32,21 @@ client.on("message", async (message) => {
 
   const command = message.content.slice(prefix.length).split(" ")[0];
   switch (command) {
+    case "debug":
+      var matches = await commands.debug(message, serverQueue, queuer.queueCommands);
+      for (let i = 0; i < matches.length; i++) {
+        var currentSong = matches[i].Title + " - " + matches[i].RawArtists;
+        var PreferredYouTubeLink = matches[i].PreferredYouTubeLink;
+        if (PreferredYouTubeLink != "") {
+          currentSong = PreferredYouTubeLink;
+        }
+        message.content = ".p " + currentSong;
+        // message.reply(message.content)
+        serverQueue = queuer.queueGet(message.guild.id);
+
+        await commands.play(message, serverQueue, queuer.queueCommands)
+      }
+      break;
     case "p":
     case "play":
       if (message.length >= 6) return;
