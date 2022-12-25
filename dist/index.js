@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,21 +35,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
-var _a = require("discord.js"), Client = _a.Client, Intents = _a.Intents;
-var fs = require("fs");
-var token = fs.readFileSync("./discordtoken", "utf8"); //"ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJeg.Ob5X9LtzF0Nb7acgyM3UVm_2WgE";
+Object.defineProperty(exports, "__esModule", { value: true });
 var prefix = ".";
+var fs = require("fs");
+var id = "a97738f2a1ba46aa9386d2f7f351dec5";
+var token = fs.readFileSync("./discordtoken", "utf8"); //"ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJeg.Ob5X9LtzF0Nb7acgyM3UVm_2WgE";
+var CONNECTIONSTRING = fs.readFileSync("./connectionstring", "utf8");
+var secret = fs.readFileSync("./spotifysecret", "utf8");
+var _a = require("discord.js"), Client = _a.Client, Intents = _a.Intents;
 var ytdl = require("ytdl-core");
 var sql = require("mssql");
-var CONNECTIONSTRING = fs.readFileSync("./connectionstring", "utf8");
 var ytMusic = require("node-youtube-music");
 var youtubesearchapi = require("youtube-search-api");
 var MessageEmbed = require("discord.js").MessageEmbed;
+var discord = require("discord.js");
 var SpotifyWebApi = require("spotify-web-api-node");
 var request = require("request");
-var id = "a97738f2a1ba46aa9386d2f7f351dec5";
-var secret = fs.readFileSync("./spotifysecret", "utf8");
 var client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
@@ -61,7 +63,7 @@ client.once("reconnecting", function () {
 client.once("disconnect", function () {
     console.log("Disconnect!");
 });
-client.on("message", function (message) { return __awaiter(_this, void 0, void 0, function () {
+client.on("message", function (message) { return __awaiter(void 0, void 0, void 0, function () {
     var serverQueue, command, _a, matches, i, currentSong, PreferredYouTubeLink, link, length, titles, i, titles, i, spotLink, spotId, count, titles, i;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -308,7 +310,7 @@ function playlist(message, serverQueue, queueCommands) {
 var say = function (message) {
     sayCommand(message);
 };
-var spotify = function (playlistId, amount) { return __awaiter(_this, void 0, void 0, function () {
+var spotify = function (playlistId, amount) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, GetRandomSongsFromPlaylist(playlistId, amount)];
@@ -316,7 +318,7 @@ var spotify = function (playlistId, amount) { return __awaiter(_this, void 0, vo
         }
     });
 }); };
-var fabian = function (message, serverQueue, queueCommands, playlistId) { return __awaiter(_this, void 0, void 0, function () {
+var fabian = function (message, serverQueue, queueCommands, playlistId) { return __awaiter(void 0, void 0, void 0, function () {
     var args, amount, interprets, matches, toQueue, i;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -346,7 +348,7 @@ var fabian = function (message, serverQueue, queueCommands, playlistId) { return
         }
     });
 }); };
-var debug = function (message, serverQueue, queueCommands) { return __awaiter(_this, void 0, void 0, function () {
+var debug = function (message, serverQueue, queueCommands) { return __awaiter(void 0, void 0, void 0, function () {
     var args, amount, playlistId, matches, toQueue, i;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -374,8 +376,7 @@ var debug = function (message, serverQueue, queueCommands) { return __awaiter(_t
         }
     });
 }); };
-module.exports = { play: play, skip: skip, clearQueue: clearQueue, playlist: playlist, say: say, spotify: spotify, fabian: fabian, debug: debug };
-var getPlaylistFromDatabase = function (playlistId) { return __awaiter(_this, void 0, void 0, function () {
+var getPlaylistFromDatabase = function (playlistId) { return __awaiter(void 0, void 0, void 0, function () {
     var QUERY, pool, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -392,7 +393,6 @@ var getPlaylistFromDatabase = function (playlistId) { return __awaiter(_this, vo
         }
     });
 }); };
-module.exports = { getPlaylistFromDatabase: getPlaylistFromDatabase };
 function isValidHttpUrl(string) {
     var url;
     try {
@@ -433,7 +433,6 @@ var getSpotifyPlaylistId = function (link) {
     var d = c.slice(0)[0];
     return d;
 };
-module.exports = { isValidHttpUrl: isValidHttpUrl, setServerQueue: setServerQueue, songInfoToSongObject: songInfoToSongObject, getNthWord: getNthWord, getSpotifyPlaylistId: getSpotifyPlaylistId };
 function tryPlay(voiceChannel, serverQueue, message, queueCommands) {
     return __awaiter(this, void 0, void 0, function () {
         var errCounter, connection, err_1, err_2;
@@ -503,7 +502,6 @@ function reallyPlay(guild, song, queueCommands) {
     dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
     sendSongToChat(serverQueue, song);
 }
-module.exports = { tryPlay: tryPlay };
 var queue = new Map();
 var queueGet = function (guildId) {
     return queue.get(guildId);
@@ -536,15 +534,7 @@ function queueAdd(id, serverQueue, message) {
     });
 }
 var queueCommands = { queueGet: queueGet, queueSet: queueSet, queueDelete: queueDelete, queueAdd: queueAdd };
-module.exports = {
-    queue: queue,
-    queueSet: queueSet,
-    queueGet: queueGet,
-    queueDelete: queueDelete,
-    queueAdd: queueAdd,
-    queueCommands: queueCommands,
-};
-var getSongInfo = function (arg) { return __awaiter(_this, void 0, void 0, function () {
+var getSongInfo = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var liste, url;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -565,7 +555,7 @@ var getSongInfo = function (arg) { return __awaiter(_this, void 0, void 0, funct
         }
     });
 }); };
-var getPlaylistInfo = function (arg) { return __awaiter(_this, void 0, void 0, function () {
+var getPlaylistInfo = function (arg) { return __awaiter(void 0, void 0, void 0, function () {
     var liste;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -583,7 +573,6 @@ var getPlaylistInfo = function (arg) { return __awaiter(_this, void 0, void 0, f
         }
     });
 }); };
-module.exports = { getSongInfo: getSongInfo, getPlaylistInfo: getPlaylistInfo };
 var getMusicEmbed = function (videoDetails, queue) {
     if (queue === void 0) { queue = []; }
     console.log(videoDetails);
@@ -627,13 +616,12 @@ var sayCommand = function (message) {
     message.channel.send(answer);
     message.delete();
 };
-module.exports = { sendSongToChat: sendSongToChat, sayCommand: sayCommand, sendAddedToQueue: sendAddedToQueue };
 var api = new SpotifyWebApi({
     clientId: id,
     clientSecret: secret,
     redirectUri: "http://www.example.com/callback",
 });
-var getAccesToken = function () { return __awaiter(_this, void 0, void 0, function () {
+var getAccesToken = function () { return __awaiter(void 0, void 0, void 0, function () {
     var authOptions, t, hacky;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -671,7 +659,7 @@ function doRequest(url) {
 var GetRandomSongsFromPlaylist = function (playlistId, amount) {
     if (playlistId === void 0) { playlistId = "30YalNqYddehoSL44yETCo"; }
     if (amount === void 0) { amount = 1; }
-    return __awaiter(_this, void 0, void 0, function () {
+    return __awaiter(void 0, void 0, void 0, function () {
         var _a, _b, retval, liste, length, tracks, i, _c, _d, _e, i_1;
         return __generator(this, function (_f) {
             switch (_f.label) {
@@ -718,7 +706,7 @@ var apiTrackToText = function (track) {
 };
 var GetMatchingSongsFromPlaylist = function (playlistId, interprets) {
     if (playlistId === void 0) { playlistId = "30YalNqYddehoSL44yETCo"; }
-    return __awaiter(_this, void 0, void 0, function () {
+    return __awaiter(void 0, void 0, void 0, function () {
         var _a, _b, retval, liste, e_1, length, tracks, i, _c, _d, _e, i_2, song, j, currentArtist, toFindArtist;
         return __generator(this, function (_f) {
             switch (_f.label) {
@@ -776,5 +764,4 @@ var GetMatchingSongsFromPlaylist = function (playlistId, interprets) {
         });
     });
 };
-module.exports = { GetRandomSongsFromPlaylist: GetRandomSongsFromPlaylist, GetMatchingSongsFromPlaylist: GetMatchingSongsFromPlaylist };
 //# sourceMappingURL=index.js.map

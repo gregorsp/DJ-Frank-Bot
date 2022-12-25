@@ -1,24 +1,22 @@
+
+const discord = require("discord.js");
 const { Client, Intents } = require("discord.js");
-
-const fs = require("fs");
-
-const token = fs.readFileSync("./discordtoken", "utf8"); //"ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJeg.Ob5X9LtzF0Nb7acgyM3UVm_2WgE";
-const prefix = ".";
-
-const ytdl = require("ytdl-core");
-var sql = require("mssql");
-
-const CONNECTIONSTRING = fs.readFileSync("./connectionstring", "utf8");
-
-const ytMusic = require("node-youtube-music");
-const youtubesearchapi = require("youtube-search-api");
 const {MessageEmbed } = require("discord.js");
-var SpotifyWebApi = require("spotify-web-api-node");
+const fs = require("fs");
+var sql = require("mssql");
+const ytMusic = require("node-youtube-music");
 const request = require("request");
+var SpotifyWebApi = require("spotify-web-api-node");
+const youtubesearchapi = require("youtube-search-api");
+const ytdl = require("ytdl-core");
 
+
+
+const prefix = ".";
 const id = "a97738f2a1ba46aa9386d2f7f351dec5";
+const token = fs.readFileSync("./discordtoken", "utf8"); //"ODg4ODEyODU4Nzk0NzI1Mzg3.YUYJeg.Ob5X9LtzF0Nb7acgyM3UVm_2WgE";
+const CONNECTIONSTRING = fs.readFileSync("./connectionstring", "utf8");
 const secret = fs.readFileSync("./spotifysecret", "utf8");
-
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
@@ -39,7 +37,7 @@ client.once("disconnect", () => {
 client.on("message", async (message) => {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
-
+  
   var serverQueue = queueGet(message.guild.id);
 
   const command = message.content.slice(prefix.length).split(" ")[0];
@@ -137,7 +135,6 @@ client.on("message", async (message) => {
 });
 
 client.login(token);
-
 
 async function play(message, serverQueue, queueCommands) {
   const args = message.content.split(" ");
@@ -261,10 +258,6 @@ const debug = async (message, serverQueue, queueCommands) => {
   return toQueue;
 }
 
-module.exports = { play, skip, clearQueue, playlist, say, spotify, fabian, debug };
-
-
-
 const getPlaylistFromDatabase = async (playlistId) => {
   const QUERY = `DECLARE	@return_value int
 
@@ -279,8 +272,6 @@ const getPlaylistFromDatabase = async (playlistId) => {
   // return the result
   return result.recordset;
 };
-
-module.exports = { getPlaylistFromDatabase };
 
 function isValidHttpUrl(string) {
   let url;
@@ -328,10 +319,6 @@ const getSpotifyPlaylistId = (link) => {
   var d = c.slice(0)[0];
   return d;
 }
-
-module.exports = { isValidHttpUrl, setServerQueue, songInfoToSongObject, getNthWord, getSpotifyPlaylistId };
-
-
 
 async function tryPlay(voiceChannel, serverQueue, message, queueCommands) {
   let errCounter = 0;
@@ -387,8 +374,6 @@ function reallyPlay(guild, song, queueCommands) {
   sendSongToChat(serverQueue, song);
 }
 
-module.exports = { tryPlay };
-
 const queue = new Map();
 
 const queueGet = (guildId) => {
@@ -419,16 +404,6 @@ async function queueAdd(id, serverQueue, message) {
 
 const queueCommands = { queueGet, queueSet, queueDelete, queueAdd };
 
-module.exports = {
-  queue,
-  queueSet,
-  queueGet,
-  queueDelete,
-  queueAdd,
-  queueCommands,
-};
-
-
 
 const getSongInfo = async (arg) => {
   //arg += ' lyrics -live -karaoke';
@@ -455,8 +430,6 @@ const getPlaylistInfo = async (arg) => {
     return await liste; //ytdl.getInfo(url);
   }
 };
-
-module.exports = { getSongInfo, getPlaylistInfo };
 
 
 const getMusicEmbed = (videoDetails, queue : any = []) => {
@@ -511,9 +484,6 @@ const sayCommand = (message) => {
   message.channel.send(answer);
   message.delete();
 };
-
-module.exports = { sendSongToChat, sayCommand, sendAddedToQueue };
-
 
 
 var api = new SpotifyWebApi({
@@ -625,5 +595,3 @@ const GetMatchingSongsFromPlaylist = async (playlistId = "30YalNqYddehoSL44yETCo
   }
   return retval;
 }
-
-module.exports = { GetRandomSongsFromPlaylist, GetMatchingSongsFromPlaylist };
