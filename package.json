@@ -2,6 +2,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
     "@discordjs/rest": "^0.1.0-canary.0",
+    "awesome-typescript-loader": "^5.2.1",
     "discord-api-types": "^0.23.1",
     "discord.js": "^12.5.3",
     "ffmpeg": "^0.0.4",
@@ -10,6 +11,7 @@
     "mssql": "^9.0.1",
     "node-youtube-music": "^0.7.0",
     "request": "^2.88.2",
+    "source-map-loader": "^4.0.1",
     "spotify-web-api-node": "^5.0.2",
     "youtube-finder": "^1.0.1",
     "youtube-search-api": "^1.0.11",

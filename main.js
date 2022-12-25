@@ -7,6 +7,8 @@ const prefix = ".";
 const commands = require("./commands.js");
 const queuer = require("./queuer.js");
 const helper = require("./helper.js");
+const search = require("./search.js");
+const sender = require("./sender.js");
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
