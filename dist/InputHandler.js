@@ -37,167 +37,82 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InputHandler = void 0;
-var fs = require("fs");
-var sql = require("mssql");
-var SpotifyWebApi = require("spotify-web-api-node");
-var prefix = ".";
-var id = "a97738f2a1ba46aa9386d2f7f351dec5";
-var CONNECTIONSTRING = fs.readFileSync("./connectionstring", "utf8");
-var secret = fs.readFileSync("./spotifysecret", "utf8");
 var CommandHandler_1 = require("./CommandHandler");
 var InputHandler = /** @class */ (function () {
     function InputHandler() {
         var _this = this;
+        this.prefix = ".";
         this.cmd = new CommandHandler_1.CommandHandler();
         this.handleMessage = function (message) { return __awaiter(_this, void 0, void 0, function () {
-            var serverQueue, command, _a, matches, i, currentSong, PreferredYouTubeLink, link, length, titles, i, titles, i, spotLink, spotId, count, titles, i;
+            var command, _a, link;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (message.author.bot)
                             return [2 /*return*/];
-                        if (!message.content.startsWith(prefix))
+                        if (!message.content.startsWith(this.prefix))
                             return [2 /*return*/];
-                        serverQueue = this.cmd.queueGet(message.guild.id);
-                        command = message.content.slice(prefix.length).split(" ")[0];
+                        command = message.content.slice(this.prefix.length).split(" ")[0];
                         _a = command;
                         switch (_a) {
                             case "debug": return [3 /*break*/, 1];
-                            case "p": return [3 /*break*/, 7];
-                            case "play": return [3 /*break*/, 7];
-                            case "playlist": return [3 /*break*/, 8];
-                            case "skip": return [3 /*break*/, 9];
-                            case "next": return [3 /*break*/, 9];
-                            case "s": return [3 /*break*/, 9];
-                            case "stop": return [3 /*break*/, 10];
-                            case "leave": return [3 /*break*/, 10];
-                            case "quit": return [3 /*break*/, 10];
-                            case "disconnect": return [3 /*break*/, 10];
-                            case "say": return [3 /*break*/, 11];
-                            case "repo": return [3 /*break*/, 12];
-                            case "random": return [3 /*break*/, 13];
-                            case "r": return [3 /*break*/, 13];
-                            case "i": return [3 /*break*/, 19];
-                            case "spotify": return [3 /*break*/, 25];
+                            case "p": return [3 /*break*/, 3];
+                            case "play": return [3 /*break*/, 3];
+                            case "playlist": return [3 /*break*/, 4];
+                            case "skip": return [3 /*break*/, 5];
+                            case "next": return [3 /*break*/, 5];
+                            case "s": return [3 /*break*/, 5];
+                            case "stop": return [3 /*break*/, 6];
+                            case "leave": return [3 /*break*/, 6];
+                            case "quit": return [3 /*break*/, 6];
+                            case "disconnect": return [3 /*break*/, 6];
+                            case "say": return [3 /*break*/, 7];
+                            case "repo": return [3 /*break*/, 8];
+                            case "random": return [3 /*break*/, 9];
+                            case "r": return [3 /*break*/, 9];
+                            case "i": return [3 /*break*/, 11];
+                            case "spotify": return [3 /*break*/, 13];
                         }
-                        return [3 /*break*/, 31];
-                    case 1: return [4 /*yield*/, this.cmd.debug(message, serverQueue)];
+                        return [3 /*break*/, 15];
+                    case 1: return [4 /*yield*/, this.cmd.debugCommand(message)];
                     case 2:
-                        matches = _b.sent();
-                        i = 0;
-                        _b.label = 3;
-                    case 3:
-                        if (!(i < matches.length)) return [3 /*break*/, 6];
-                        currentSong = matches[i].Title + " - " + matches[i].RawArtists;
-                        PreferredYouTubeLink = matches[i].PreferredYouTubeLink;
-                        if (PreferredYouTubeLink != "") {
-                            currentSong = PreferredYouTubeLink;
-                        }
-                        message.content = ".p " + currentSong;
-                        // message.reply(message.content)
-                        serverQueue = this.cmd.queueGet(message.guild.id);
-                        return [4 /*yield*/, this.cmd.play(message, serverQueue)];
-                    case 4:
                         _b.sent();
-                        _b.label = 5;
-                    case 5:
-                        i++;
-                        return [3 /*break*/, 3];
-                    case 6: return [3 /*break*/, 32];
-                    case 7:
-                        if (message.content.length >= 6)
+                        return [3 /*break*/, 16];
+                    case 3:
+                        if (message.content.length <= 6)
                             return [2 /*return*/];
-                        this.cmd.play(message, serverQueue);
-                        return [3 /*break*/, 32];
+                        this.cmd.playCommand(message);
+                        return [3 /*break*/, 16];
+                    case 4:
+                        this.cmd.playlistCommand(message);
+                        return [3 /*break*/, 16];
+                    case 5:
+                        this.cmd.skipCommand(message);
+                        return [3 /*break*/, 16];
+                    case 6:
+                        this.cmd.clearQueueCommand(message);
+                        return [3 /*break*/, 16];
+                    case 7:
+                        this.cmd.sayCommand(message);
+                        return [3 /*break*/, 16];
                     case 8:
-                        this.cmd.playlist(message, serverQueue);
-                        return [3 /*break*/, 32];
-                    case 9:
-                        this.cmd.skip(message, serverQueue);
-                        return [3 /*break*/, 32];
-                    case 10:
-                        this.cmd.clearQueue(message, serverQueue);
-                        return [3 /*break*/, 32];
-                    case 11:
-                        this.cmd.say(message);
-                        return [3 /*break*/, 32];
-                    case 12:
                         link = "https://www.github.com/gregorsp/DJ-Frank-Bot";
                         message.reply(link);
-                        return [3 /*break*/, 32];
-                    case 13:
-                        length = message.content.length > 8 ? parseInt(this.cmd.getNthWord(message.content, 2)) : 1;
-                        if (length > 10)
-                            length = 10;
-                        return [4 /*yield*/, this.cmd.spotify("30YalNqYddehoSL44yETCo", length)];
+                        return [3 /*break*/, 16];
+                    case 9: return [4 /*yield*/, this.cmd.randomCommand(message)];
+                    case 10:
+                        _b.sent();
+                        return [3 /*break*/, 16];
+                    case 11: return [4 /*yield*/, this.cmd.interpretCommand(message)];
+                    case 12:
+                        _b.sent();
+                        return [3 /*break*/, 16];
+                    case 13: return [4 /*yield*/, this.cmd.spotifyCommand(message)];
                     case 14:
-                        titles = _b.sent();
-                        i = 0;
-                        _b.label = 15;
-                    case 15:
-                        if (!(i < titles.length)) return [3 /*break*/, 18];
-                        message.content = ".p " + titles[i];
-                        // message.reply(message.content)
-                        serverQueue = this.cmd.queueGet(message.guild.id);
-                        return [4 /*yield*/, this.cmd.play(message, serverQueue)];
-                    case 16:
                         _b.sent();
-                        _b.label = 17;
-                    case 17:
-                        i++;
-                        return [3 /*break*/, 15];
-                    case 18: return [3 /*break*/, 32];
-                    case 19: return [4 /*yield*/, this.cmd.fabian(message, serverQueue, "30YalNqYddehoSL44yETCo")];
-                    case 20:
-                        titles = _b.sent();
-                        if (titles.length == 0) {
-                            message.reply("Gibs keine Beweise");
-                        }
-                        i = 0;
-                        _b.label = 21;
-                    case 21:
-                        if (!(i < titles.length)) return [3 /*break*/, 24];
-                        message.content = ".p " + titles[i];
-                        // message.reply(message.content)
-                        serverQueue = this.cmd.queueGet(message.guild.id);
-                        return [4 /*yield*/, this.cmd.play(message, serverQueue)];
-                    case 22:
-                        _b.sent();
-                        _b.label = 23;
-                    case 23:
-                        i++;
-                        return [3 /*break*/, 21];
-                    case 24: return [3 /*break*/, 32];
-                    case 25:
-                        spotLink = this.cmd.getNthWord(message.content, 2);
-                        spotId = this.cmd.getSpotifyPlaylistId(spotLink);
-                        count = 1;
-                        try {
-                            count = parseInt(this.cmd.getNthWord(message.content, 3));
-                        }
-                        catch (ex) {
-                            message.reply(ex);
-                        }
-                        return [4 /*yield*/, this.cmd.spotify(spotId, count)];
-                    case 26:
-                        titles = _b.sent();
-                        i = 0;
-                        _b.label = 27;
-                    case 27:
-                        if (!(i < titles.length)) return [3 /*break*/, 30];
-                        message.content = ".p " + titles[i];
-                        // message.reply(message.content)
-                        serverQueue = this.cmd.queueGet(message.guild.id);
-                        return [4 /*yield*/, this.cmd.play(message, serverQueue)];
-                    case 28:
-                        _b.sent();
-                        _b.label = 29;
-                    case 29:
-                        i++;
-                        return [3 /*break*/, 27];
-                    case 30: return [3 /*break*/, 32];
-                    case 31: return [3 /*break*/, 32];
-                    case 32: return [2 /*return*/];
+                        return [3 /*break*/, 16];
+                    case 15: return [3 /*break*/, 16];
+                    case 16: return [2 /*return*/];
                 }
             });
         }); };

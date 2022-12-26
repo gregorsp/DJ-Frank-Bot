@@ -37,33 +37,184 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommandHandler = void 0;
-var discord_js_1 = require("discord.js");
-var fs = require("fs");
-var sql = require("mssql");
-var ytMusic = require("node-youtube-music");
-var request = require("request");
-var SpotifyWebApi = require("spotify-web-api-node");
-var youtubesearchapi = require("youtube-search-api");
 var ytdl = require("ytdl-core");
-var prefix = ".";
-var id = "a97738f2a1ba46aa9386d2f7f351dec5";
-var CONNECTIONSTRING = fs.readFileSync("./connectionstring", "utf8");
-var secret = fs.readFileSync("./spotifysecret", "utf8");
+var DatabaseHandler_1 = require("./DatabaseHandler");
+var Helper_1 = require("./Helper");
+var MusicHandler_1 = require("./MusicHandler");
+var QueueHandler_1 = require("./QueueHandler");
+var MessageHandler_1 = require("./MessageHandler");
 var CommandHandler = /** @class */ (function () {
     function CommandHandler() {
-        this.queue = new Map();
-        this.api = new SpotifyWebApi({
-            clientId: id,
-            clientSecret: secret,
-            redirectUri: "http://www.example.com/callback",
-        });
     }
-    CommandHandler.prototype.play = function (message, serverQueue) {
+    CommandHandler.prototype.debugCommand = function (message) {
         return __awaiter(this, void 0, void 0, function () {
-            var args, voiceChannel, permissions, songInfo, song;
+            var matches, i, currentSong, PreferredYouTubeLink;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.debug(message)];
+                    case 1:
+                        matches = _a.sent();
+                        i = 0;
+                        _a.label = 2;
+                    case 2:
+                        if (!(i < matches.length)) return [3 /*break*/, 5];
+                        currentSong = matches[i].Title + " - " + matches[i].RawArtists;
+                        PreferredYouTubeLink = matches[i].PreferredYouTubeLink;
+                        if (PreferredYouTubeLink != "") {
+                            currentSong = PreferredYouTubeLink;
+                        }
+                        message.content = ".p " + currentSong;
+                        // message.reply(message.content)
+                        return [4 /*yield*/, this.playCommand(message)];
+                    case 3:
+                        // message.reply(message.content)
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
+                        i++;
+                        return [3 /*break*/, 2];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CommandHandler.prototype.debug = function (message) {
+        return __awaiter(this, void 0, void 0, function () {
+            var args, amount, playlistId, matches, toQueue, i;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        args = message.content.split(" ");
+                        amount = args.slice(1)[0];
+                        playlistId = parseInt(args.slice(2)[0]);
+                        return [4 /*yield*/, DatabaseHandler_1.DatabaseHandler.getPlaylistFromDatabase(playlistId)];
+                    case 1:
+                        matches = _a.sent();
+                        toQueue = [];
+                        if (amount >= matches.length) {
+                            toQueue = matches;
+                            //shuffle toQueue
+                            toQueue = toQueue.sort(function (a, b) { return 0.5 - Math.random(); });
+                            for (i = matches.length; i < amount; i++) {
+                                // add a random entry of matches to toQueue
+                                toQueue.push(matches[Math.floor(Math.random() * matches.length)]);
+                            }
+                        }
+                        else {
+                            toQueue = matches.sort(function (a, b) { return 0.5 - Math.random(); }).slice(0, amount);
+                        }
+                        return [2 /*return*/, toQueue];
+                }
+            });
+        });
+    };
+    CommandHandler.prototype.randomCommand = function (message) {
+        return __awaiter(this, void 0, void 0, function () {
+            var length, titles, i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        length = message.content.length > 8
+                            ? parseInt(Helper_1.Helper.getNthWord(message.content, 2))
+                            : 1;
+                        if (length > 10)
+                            length = 10;
+                        return [4 /*yield*/, this.spotify("30YalNqYddehoSL44yETCo", length)];
+                    case 1:
+                        titles = _a.sent();
+                        i = 0;
+                        _a.label = 2;
+                    case 2:
+                        if (!(i < titles.length)) return [3 /*break*/, 5];
+                        message.content = ".p " + titles[i];
+                        // message.reply(message.content)
+                        return [4 /*yield*/, this.playCommand(message)];
+                    case 3:
+                        // message.reply(message.content)
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
+                        i++;
+                        return [3 /*break*/, 2];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CommandHandler.prototype.interpretCommand = function (message) {
+        return __awaiter(this, void 0, void 0, function () {
+            var titles, i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.fabian(message, "30YalNqYddehoSL44yETCo")];
+                    case 1:
+                        titles = _a.sent();
+                        if (titles.length == 0) {
+                            message.reply("Gibs keine Beweise");
+                        }
+                        i = 0;
+                        _a.label = 2;
+                    case 2:
+                        if (!(i < titles.length)) return [3 /*break*/, 5];
+                        message.content = ".p " + titles[i];
+                        // message.reply(message.content)
+                        return [4 /*yield*/, this.playCommand(message)];
+                    case 3:
+                        // message.reply(message.content)
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
+                        i++;
+                        return [3 /*break*/, 2];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CommandHandler.prototype.spotifyCommand = function (message) {
+        return __awaiter(this, void 0, void 0, function () {
+            var spotLink, spotId, count, titles, i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        spotLink = Helper_1.Helper.getNthWord(message.content, 2);
+                        spotId = Helper_1.Helper.getSpotifyPlaylistId(spotLink);
+                        count = 1;
+                        try {
+                            count = parseInt(Helper_1.Helper.getNthWord(message.content, 3));
+                        }
+                        catch (ex) {
+                            message.reply(ex);
+                        }
+                        return [4 /*yield*/, this.spotify(spotId, count)];
+                    case 1:
+                        titles = _a.sent();
+                        i = 0;
+                        _a.label = 2;
+                    case 2:
+                        if (!(i < titles.length)) return [3 /*break*/, 5];
+                        message.content = ".p " + titles[i];
+                        // message.reply(message.content)
+                        return [4 /*yield*/, this.playCommand(message)];
+                    case 3:
+                        // message.reply(message.content)
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
+                        i++;
+                        return [3 /*break*/, 2];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CommandHandler.prototype.playCommand = function (message) {
+        return __awaiter(this, void 0, void 0, function () {
+            var serverQueue, args, voiceChannel, permissions, songInfo, song;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        serverQueue = QueueHandler_1.QueueHandler.queueGet(message.guild.id);
                         args = message.content.split(" ");
                         voiceChannel = message.member.voice.channel;
                         if (!voiceChannel)
@@ -72,12 +223,12 @@ var CommandHandler = /** @class */ (function () {
                         if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
                             return [2 /*return*/, message.channel.send("Mir fehlen Rechte!")];
                         }
-                        return [4 /*yield*/, this.getSongInfo(args.slice(1).join(" "))];
+                        return [4 /*yield*/, MusicHandler_1.MusicHandler.getSongInfo(args.slice(1).join(" "))];
                     case 1:
                         songInfo = _a.sent();
                         song = this.songInfoToSongObject(songInfo);
                         if (!serverQueue) {
-                            serverQueue = this.setServerQueue(message);
+                            serverQueue = QueueHandler_1.QueueHandler.setServerQueue(message);
                             serverQueue.songs.push(song);
                             this.tryPlay(voiceChannel, serverQueue, message);
                         }
@@ -90,14 +241,16 @@ var CommandHandler = /** @class */ (function () {
             });
         });
     };
-    CommandHandler.prototype.skip = function (message, serverQueue) {
+    CommandHandler.prototype.skipCommand = function (message) {
+        var serverQueue = QueueHandler_1.QueueHandler.queueGet(message.guild.id);
         if (!message.member.voice.channel)
             return message.channel.send("Du bist in keinem Voice!");
         if (!serverQueue)
             return message.channel.send("Queue ist leer!");
         serverQueue.connection.dispatcher.end();
     };
-    CommandHandler.prototype.clearQueue = function (message, serverQueue) {
+    CommandHandler.prototype.clearQueueCommand = function (message) {
+        var serverQueue = QueueHandler_1.QueueHandler.queueGet(message.guild.id);
         if (!message.member.voice.channel)
             return message.channel.send("Du bist in keinem Voice!");
         if (!serverQueue)
@@ -105,12 +258,13 @@ var CommandHandler = /** @class */ (function () {
         serverQueue.songs = [];
         serverQueue.connection.dispatcher.end();
     };
-    CommandHandler.prototype.playlist = function (message, serverQueue) {
+    CommandHandler.prototype.playlistCommand = function (message) {
         return __awaiter(this, void 0, void 0, function () {
-            var args, voiceChannel, permissions, playlistInfo, emptyQueue, i;
+            var serverQueue, args, voiceChannel, permissions, playlistInfo, emptyQueue, i;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        serverQueue = QueueHandler_1.QueueHandler.queueGet(message.guild.id);
                         args = message.content.split(" ");
                         voiceChannel = message.member.voice.channel;
                         if (!voiceChannel)
@@ -119,20 +273,20 @@ var CommandHandler = /** @class */ (function () {
                         if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
                             return [2 /*return*/, message.channel.send("Mir fehlen Rechte!")];
                         }
-                        return [4 /*yield*/, this.getPlaylistInfo(args.slice(1).join(" "))];
+                        return [4 /*yield*/, MusicHandler_1.MusicHandler.getPlaylistInfo(args.slice(1).join(" "))];
                     case 1:
                         playlistInfo = _a.sent();
                         console.log(playlistInfo);
                         emptyQueue = false;
                         if (!serverQueue) {
-                            serverQueue = this.setServerQueue(message);
+                            serverQueue = QueueHandler_1.QueueHandler.setServerQueue(message);
                             emptyQueue = true;
                         }
                         i = 0;
                         _a.label = 2;
                     case 2:
                         if (!(i < playlistInfo.length)) return [3 /*break*/, 5];
-                        return [4 /*yield*/, this.queueAdd(playlistInfo[i].id, serverQueue, message)];
+                        return [4 /*yield*/, QueueHandler_1.QueueHandler.queueAdd(playlistInfo[i].id, serverQueue, message)];
                     case 3:
                         _a.sent();
                         _a.label = 4;
@@ -143,26 +297,27 @@ var CommandHandler = /** @class */ (function () {
                         if (emptyQueue) {
                             this.tryPlay(voiceChannel, serverQueue, message);
                         }
-                        console.log(serverQueue.songs);
                         return [2 /*return*/];
                 }
             });
         });
     };
-    CommandHandler.prototype.say = function (message) {
-        this.sayCommand(message);
+    CommandHandler.prototype.sayCommand = function (message) {
+        var answer = message.content.slice(5);
+        message.channel.send(answer);
+        message.delete();
     };
     CommandHandler.prototype.spotify = function (playlistId, amount) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.GetRandomSongsFromPlaylist(playlistId, amount)];
+                    case 0: return [4 /*yield*/, MusicHandler_1.MusicHandler.GetRandomSongsFromPlaylist(playlistId, amount)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    CommandHandler.prototype.fabian = function (message, serverQueue, playlistId) {
+    CommandHandler.prototype.fabian = function (message, playlistId) {
         return __awaiter(this, void 0, void 0, function () {
             var args, amount, interprets, matches, toQueue, i;
             return __generator(this, function (_a) {
@@ -171,7 +326,7 @@ var CommandHandler = /** @class */ (function () {
                         args = message.content.split(" ");
                         amount = parseInt(args.slice(1)[0]);
                         interprets = args.slice(2).join(" ").split("|");
-                        return [4 /*yield*/, this.GetMatchingSongsFromPlaylist(playlistId, interprets)];
+                        return [4 /*yield*/, MusicHandler_1.MusicHandler.GetMatchingSongsFromPlaylist(playlistId, interprets)];
                     case 1:
                         matches = _a.sent();
                         toQueue = [];
@@ -194,77 +349,6 @@ var CommandHandler = /** @class */ (function () {
             });
         });
     };
-    CommandHandler.prototype.debug = function (message, serverQueue) {
-        return __awaiter(this, void 0, void 0, function () {
-            var args, amount, playlistId, matches, toQueue, i;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        args = message.content.split(" ");
-                        amount = args.slice(1)[0];
-                        playlistId = parseInt(args.slice(2)[0]);
-                        return [4 /*yield*/, this.getPlaylistFromDatabase(playlistId)];
-                    case 1:
-                        matches = _a.sent();
-                        toQueue = [];
-                        if (amount >= matches.length) {
-                            toQueue = matches;
-                            //shuffle toQueue
-                            toQueue = toQueue.sort(function (a, b) { return 0.5 - Math.random(); });
-                            for (i = matches.length; i < amount; i++) {
-                                // add a random entry of matches to toQueue
-                                toQueue.push(matches[Math.floor(Math.random() * matches.length)]);
-                            }
-                        }
-                        else {
-                            toQueue = matches.sort(function (a, b) { return 0.5 - Math.random(); }).slice(0, amount);
-                        }
-                        return [2 /*return*/, toQueue];
-                }
-            });
-        });
-    };
-    CommandHandler.prototype.getPlaylistFromDatabase = function (playlistId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var QUERY, pool, result;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        QUERY = "DECLARE\t@return_value int\n    \n      EXEC\t@return_value = [dbo].[GetSongsByPlaylistId]\n              @playlistId = ".concat(playlistId, "\n      \n      SELECT\t'Return Value' = @return_value");
-                        return [4 /*yield*/, sql.connect(CONNECTIONSTRING)];
-                    case 1:
-                        pool = _a.sent();
-                        return [4 /*yield*/, pool.request().query(QUERY)];
-                    case 2:
-                        result = _a.sent();
-                        // return the result
-                        return [2 /*return*/, result.recordset];
-                }
-            });
-        });
-    };
-    CommandHandler.prototype.isValidHttpUrl = function (string) {
-        var url;
-        try {
-            url = new URL(string);
-        }
-        catch (_) {
-            return false;
-        }
-        return url.protocol === "http:" || url.protocol === "https:";
-    };
-    CommandHandler.prototype.setServerQueue = function (message) {
-        var queueContruct = {
-            textChannel: message.channel,
-            voiceChannel: message.member.voice.channel,
-            connection: null,
-            songs: [],
-            volume: 5,
-            playing: true,
-        };
-        this.queueSet(message.guild.id, queueContruct);
-        return this.queueGet(message.guild.id);
-    };
     CommandHandler.prototype.songInfoToSongObject = function (songInfo) {
         return {
             title: songInfo.videoDetails.title,
@@ -272,21 +356,9 @@ var CommandHandler = /** @class */ (function () {
             videoDetails: songInfo.videoDetails,
         };
     };
-    CommandHandler.prototype.getNthWord = function (text, n) {
-        return text.split(" ")[n - 1];
-    };
-    CommandHandler.prototype.getSpotifyPlaylistId = function (link) {
-        // https://open.spotify.com/playlist/7ktaQvt898S3BYWkO90gFu?si=54b6547bf49a4d87
-        var a = link.split("/");
-        var b = a.slice(-1)[0];
-        var c = b.split("?");
-        var d = c.slice(0)[0];
-        return d;
-    };
     CommandHandler.prototype.tryPlay = function (voiceChannel, serverQueue, message) {
         return __awaiter(this, void 0, void 0, function () {
             var errCounter, connection, err_1, err_2;
-            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -304,7 +376,7 @@ var CommandHandler = /** @class */ (function () {
                     case 4:
                         connection = _a.sent();
                         connection.on("disconnect", function (event) {
-                            _this.queueDelete(message.guild.id);
+                            QueueHandler_1.QueueHandler.queueDelete(message.guild.id);
                             message.channel.send("Die Party ist vorbei!");
                         });
                         serverQueue.connection = connection;
@@ -324,7 +396,7 @@ var CommandHandler = /** @class */ (function () {
                     case 8:
                         err_2 = _a.sent();
                         console.log(err_2);
-                        this.queueDelete(message.guild.id);
+                        QueueHandler_1.QueueHandler.queueDelete(message.guild.id);
                         return [2 /*return*/, message.channel.send(err_2)];
                     case 9: return [2 /*return*/];
                 }
@@ -333,10 +405,10 @@ var CommandHandler = /** @class */ (function () {
     };
     CommandHandler.prototype.reallyPlay = function (guild, song) {
         var _this = this;
-        var serverQueue = this.queueGet(guild.id);
+        var serverQueue = QueueHandler_1.QueueHandler.queueGet(guild.id);
         if (!song) {
             serverQueue.voiceChannel.leave();
-            this.queueDelete(guild.id);
+            QueueHandler_1.QueueHandler.queueDelete(guild.id);
             return;
         }
         var dispatcher = serverQueue.connection
@@ -352,268 +424,7 @@ var CommandHandler = /** @class */ (function () {
             _this.reallyPlay(guild, serverQueue.songs[0]);
         });
         dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-        this.sendSongToChat(serverQueue, song);
-    };
-    CommandHandler.prototype.queueGet = function (guildId) {
-        return this.queue.get(guildId);
-    };
-    CommandHandler.prototype.queueSet = function (guildId, queueContruct) {
-        return this.queue.set(guildId, queueContruct);
-    };
-    CommandHandler.prototype.queueDelete = function (guildId) {
-        return this.queue.delete(guildId);
-    };
-    CommandHandler.prototype.queueAdd = function (id, serverQueue, message) {
-        return __awaiter(this, void 0, void 0, function () {
-            var arg, songInfo, song;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        arg = "https://www.youtube.com/watch?v=" + id;
-                        return [4 /*yield*/, this.getSongInfo(arg)];
-                    case 1:
-                        songInfo = _a.sent();
-                        song = {
-                            title: songInfo.videoDetails.title,
-                            url: songInfo.videoDetails.video_url,
-                            videoDetails: songInfo.videoDetails,
-                        };
-                        serverQueue.songs.push(song);
-                        return [2 /*return*/, this.sendAddedToQueue(message.channel, song)];
-                }
-            });
-        });
-    };
-    CommandHandler.prototype.getSongInfo = function (songArgs) {
-        return __awaiter(this, void 0, void 0, function () {
-            var liste, url;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!this.isValidHttpUrl(songArgs)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, ytdl.getInfo(songArgs)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                    case 2: return [4 /*yield*/, ytMusic.searchMusics(songArgs)];
-                    case 3:
-                        liste = _a.sent();
-                        if (!(liste.length == 0)) return [3 /*break*/, 5];
-                        return [4 /*yield*/, ytdl.getInfo("https://www.youtube.com/watch?v=lYBUbBu4W08")];
-                    case 4: return [2 /*return*/, _a.sent()];
-                    case 5:
-                        url = "https://www.youtube.com/watch?v=" + liste[0].youtubeId;
-                        return [4 /*yield*/, ytdl.getInfo(url)];
-                    case 6: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    CommandHandler.prototype.getPlaylistInfo = function (arg) {
-        return __awaiter(this, void 0, void 0, function () {
-            var liste;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!this.isValidHttpUrl(arg)) return [3 /*break*/, 4];
-                        return [4 /*yield*/, youtubesearchapi.GetPlaylistData(arg.split("=")[1])];
-                    case 1: return [4 /*yield*/, (_a.sent()).items];
-                    case 2:
-                        liste = _a.sent();
-                        //const url = "https://www.youtube.com/watch?v=" + liste.items[0].id;
-                        console.log(liste);
-                        return [4 /*yield*/, liste];
-                    case 3: return [2 /*return*/, _a.sent()]; //ytdl.getInfo(url);
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    CommandHandler.prototype.getMusicEmbed = function (videoDetails, queue) {
-        if (queue === void 0) { queue = []; }
-        console.log(videoDetails);
-        var author = videoDetails.author.name;
-        if (author.endsWith(" - Topic")) {
-            author = author.slice(0, author.length - 8);
-        }
-        var count = queue.songs.length - 1;
-        var embed = new discord_js_1.MessageEmbed()
-            .setColor("#0099ff")
-            .setTitle(videoDetails.title)
-            .setURL(videoDetails.video_url)
-            .setAuthor(author, videoDetails.author.thumbnails.slice(-1)[0].url, videoDetails.author.user_url)
-            .setFooter("Noch " + count + " weitere Lieder in der Queue")
-            //.setDescription(videoDetails.description)
-            //.setThumbnail(videoDetails.thumbnails.slice(-1)[0].url)
-            // .addFields(
-            //   { name: 'Regular field title', value: 'Some value here' },
-            //   { name: '\u200B', value: '\u200B' },
-            //   { name: 'Inline field title', value: 'Some value here', inline: true },
-            //   { name: 'Inline field title', value: 'Some value here', inline: true },
-            // )
-            //.addField('Inline field title', 'Some value here', true)
-            .setImage(videoDetails.thumbnails.slice(-1)[0].url);
-        //.setTimestamp()
-        //.setFooter('Some footer text here', 'https://i.imgur.com/AfFp7pu.png');
-        return embed;
-    };
-    CommandHandler.prototype.sendSongToChat = function (serverQueue, song) {
-        serverQueue.textChannel.send("Jetzt: **".concat(song.title, "**"));
-        serverQueue.textChannel.send(this.getMusicEmbed(song.videoDetails, serverQueue));
-        if (Math.random() * 5 < 1) {
-            serverQueue.textChannel.send("Den Song mag ich besonders gern!");
-        }
-    };
-    CommandHandler.prototype.sendAddedToQueue = function (channel, song) {
-        return channel.send("".concat(song.title, " wurde zur Queue hinzugef\u00FCgt!"));
-    };
-    CommandHandler.prototype.sayCommand = function (message) {
-        var answer = message.content.slice(5);
-        message.channel.send(answer);
-        message.delete();
-    };
-    CommandHandler.prototype.getAccesToken = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var authOptions, t, hacky;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        authOptions = {
-                            url: "https://accounts.spotify.com/api/token",
-                            headers: {
-                                Authorization: "Basic " + new Buffer(id + ":" + secret).toString("base64"),
-                            },
-                            form: {
-                                grant_type: "client_credentials",
-                            },
-                            json: true,
-                        };
-                        return [4 /*yield*/, this.doRequest(authOptions)];
-                    case 1:
-                        t = _a.sent();
-                        hacky = t;
-                        return [2 /*return*/, hacky.access_token];
-                }
-            });
-        });
-    };
-    CommandHandler.prototype.doRequest = function (url) {
-        return new Promise(function (resolve, reject) {
-            request.post(url, function (error, res, body) {
-                if (!error && res.statusCode == 200) {
-                    resolve(body);
-                }
-                else {
-                    reject(error);
-                }
-            });
-        });
-    };
-    CommandHandler.prototype.GetRandomSongsFromPlaylist = function (playlistId, amount) {
-        if (playlistId === void 0) { playlistId = "30YalNqYddehoSL44yETCo"; }
-        if (amount === void 0) { amount = 1; }
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, _b, retval, liste, length, tracks, i, _c, _d, _e, i_1;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
-                    case 0:
-                        _b = (_a = this.api).setAccessToken;
-                        return [4 /*yield*/, this.getAccesToken()];
-                    case 1:
-                        _b.apply(_a, [_f.sent()]);
-                        retval = [];
-                        return [4 /*yield*/, this.api.getPlaylist(playlistId)];
-                    case 2:
-                        liste = _f.sent();
-                        length = liste.body.tracks.total;
-                        tracks = [];
-                        i = 0;
-                        _f.label = 3;
-                    case 3:
-                        if (!(i < length)) return [3 /*break*/, 6];
-                        _d = (_c = tracks.push).apply;
-                        _e = [tracks];
-                        return [4 /*yield*/, this.api.getPlaylistTracks(playlistId, {
-                                offset: i,
-                                limit: 100,
-                            })];
-                    case 4:
-                        _d.apply(_c, _e.concat([(_f.sent()).body.items]));
-                        _f.label = 5;
-                    case 5:
-                        i = i + 100;
-                        return [3 /*break*/, 3];
-                    case 6:
-                        for (i_1 = 0; i_1 < amount && i_1 < 20; i_1++) {
-                            retval.push(this.apiTrackToText(tracks[Math.floor(Math.random() * tracks.length)]));
-                        }
-                        return [2 /*return*/, retval];
-                }
-            });
-        });
-    };
-    CommandHandler.prototype.apiTrackToText = function (track) {
-        var artist = track.track.artists[0].name;
-        var title = track.track.name;
-        return artist + " - " + title;
-    };
-    CommandHandler.prototype.GetMatchingSongsFromPlaylist = function (playlistId, interprets) {
-        if (playlistId === void 0) { playlistId = "30YalNqYddehoSL44yETCo"; }
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, _b, retval, liste, e_1, length, tracks, i, _c, _d, _e, i_2, song, j, currentArtist, toFindArtist;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
-                    case 0:
-                        _b = (_a = this.api).setAccessToken;
-                        return [4 /*yield*/, this.getAccesToken()];
-                    case 1:
-                        _b.apply(_a, [_f.sent()]);
-                        retval = [];
-                        liste = [];
-                        _f.label = 2;
-                    case 2:
-                        _f.trys.push([2, 4, , 5]);
-                        return [4 /*yield*/, this.api.getPlaylist(playlistId)];
-                    case 3:
-                        liste = _f.sent(); //https://open.spotify.com/playlist/30YalNqYddehoSL44yETCo?si=e7f2c7e83eef45f7
-                        return [3 /*break*/, 5];
-                    case 4:
-                        e_1 = _f.sent();
-                        console.error(e_1);
-                        return [3 /*break*/, 5];
-                    case 5:
-                        length = liste.body.tracks.total;
-                        tracks = [];
-                        i = 0;
-                        _f.label = 6;
-                    case 6:
-                        if (!(i < length)) return [3 /*break*/, 9];
-                        _d = (_c = tracks.push).apply;
-                        _e = [tracks];
-                        return [4 /*yield*/, this.api.getPlaylistTracks(playlistId, {
-                                offset: i,
-                                limit: 100,
-                            })];
-                    case 7:
-                        _d.apply(_c, _e.concat([(_f.sent()).body.items]));
-                        _f.label = 8;
-                    case 8:
-                        i = i + 100;
-                        return [3 /*break*/, 6];
-                    case 9:
-                        for (i_2 = 0; i_2 < length; i_2++) {
-                            song = this.apiTrackToText(tracks[i_2]);
-                            for (j = 0; j < interprets.length; j++) {
-                                currentArtist = tracks[i_2].track.artists[0].name.toLowerCase();
-                                toFindArtist = interprets[j].toLowerCase().trim();
-                                if (currentArtist.includes(toFindArtist)) {
-                                    retval.push(song);
-                                    continue;
-                                }
-                            }
-                        }
-                        return [2 /*return*/, retval];
-                }
-            });
-        });
+        MessageHandler_1.MessageHandler.sendSongToChat(serverQueue, song);
     };
     return CommandHandler;
 }());
