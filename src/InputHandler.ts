@@ -78,7 +78,7 @@ export class InputHandler {
       case "random":
       case "r":
         var length =
-          message.content.length > 8 ? this.getNthWord(message.content, 2) : 1;
+          message.content.length > 8 ? parseInt(this.getNthWord(message.content, 2)) : 1;
         if (length > 10) length = 10;
         var titles = await this.spotify("30YalNqYddehoSL44yETCo", length);
         for (let i = 0; i < titles.length; i++) {
@@ -111,7 +111,7 @@ export class InputHandler {
         var spotId = this.getSpotifyPlaylistId(spotLink);
         var count = 1;
         try {
-          count = this.getNthWord(message.content, 3);
+          count = parseInt(this.getNthWord(message.content, 3));
         } catch (ex) {
           message.reply(ex);
         }
@@ -502,7 +502,7 @@ export class InputHandler {
     return hacky.access_token;
   }
 
-  doRequest(url : string) {
+  doRequest(url) {
     return new Promise(function (resolve, reject) {
       request.post(url, function (error, res, body) {
         if (!error && res.statusCode == 200) {
