@@ -23,10 +23,10 @@ export class Helper {
 
     return url.protocol === "http:" || url.protocol === "https:";
   }
-  static  getNthWord(text: string, n: number) {
+  static getNthWord(text: string, n: number) {
     return text.split(" ")[n - 1];
   }
-  static   getSpotifyPlaylistId(link: string) {
+  static getSpotifyPlaylistId(link: string) {
     // https://open.spotify.com/playlist/7ktaQvt898S3BYWkO90gFu?si=54b6547bf49a4d87
     var a = link.split("/");
     var b = a.slice(-1)[0];

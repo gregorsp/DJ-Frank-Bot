@@ -5,7 +5,7 @@ export class InputHandler {
   private prefix = ".";
   private cmd = new CommandHandler();
 
-  handleMessage = async (message : Message) => {
+  handleMessage = async (message: Message) => {
     if (message.author.bot) return;
     if (!message.content.startsWith(this.prefix)) return;
 
@@ -53,5 +53,5 @@ export class InputHandler {
       default:
         break;
     }
-  }  
+  };
 }

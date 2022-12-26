@@ -1,4 +1,3 @@
-
 import { Client } from "discord.js";
 import fs = require("fs");
 import { InputHandler } from "./inputhandler";

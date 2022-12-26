@@ -11,7 +11,7 @@ export class MessageHandler {
     }
   }
 
- public static sendAddedToQueue(channel, song) {
+  public static sendAddedToQueue(channel, song) {
     return channel.send(`${song.title} wurde zur Queue hinzugefügt!`);
   }
   static getMusicEmbed(videoDetails, queue: any = []) {

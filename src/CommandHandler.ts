@@ -6,7 +6,7 @@ import ytdl = require("ytdl-core");
 import { DatabaseHandler } from "./DatabaseHandler";
 import { Helper } from "./Helper";
 import { MusicHandler } from "./MusicHandler";
-import { QueueHandler } from './QueueHandler';
+import { QueueHandler } from "./QueueHandler";
 import { MessageHandler } from "./MessageHandler";
 
 export class CommandHandler {
@@ -146,7 +146,9 @@ export class CommandHandler {
       return message.channel.send("Mir fehlen Rechte!");
     }
 
-    const playlistInfo = await MusicHandler.getPlaylistInfo(args.slice(1).join(" "));
+    const playlistInfo = await MusicHandler.getPlaylistInfo(
+      args.slice(1).join(" ")
+    );
     console.log(playlistInfo);
     var emptyQueue = false;
     if (!serverQueue) {
