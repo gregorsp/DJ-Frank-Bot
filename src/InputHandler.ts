@@ -130,7 +130,7 @@ export class InputHandler {
     }
   }
 
-  async play(message, serverQueue) {
+  async play(message : Message, serverQueue) {
     const args = message.content.split(" ");
 
     const voiceChannel = message.member.voice.channel;
@@ -156,14 +156,14 @@ export class InputHandler {
     }
   }
 
-  skip(message, serverQueue) {
+  skip(message: Message, serverQueue) {
     if (!message.member.voice.channel)
       return message.channel.send("Du bist in keinem Voice!");
     if (!serverQueue) return message.channel.send("Queue ist leer!");
     serverQueue.connection.dispatcher.end();
   }
 
-  clearQueue(message, serverQueue) {
+  clearQueue(message: Message, serverQueue) {
     if (!message.member.voice.channel)
       return message.channel.send("Du bist in keinem Voice!");
 
@@ -173,7 +173,7 @@ export class InputHandler {
     serverQueue.connection.dispatcher.end();
   }
 
-  async playlist(message, serverQueue) {
+  async playlist(message: Message, serverQueue) {
     const args = message.content.split(" ");
 
     const voiceChannel = message.member.voice.channel;
@@ -200,17 +200,17 @@ export class InputHandler {
     //...
   }
 
-  say(message) {
+  say(message: Message) {
     this.sayCommand(message);
   }
 
-  async spotify(playlistId, amount) {
+  async spotify(playlistId : string, amount : number) {
     return await this.GetRandomSongsFromPlaylist(playlistId, amount);
   }
 
-  async fabian(message, serverQueue, playlistId) {
+  async fabian(message: Message, serverQueue, playlistId : string) {
     const args = message.content.split(" ");
-    var amount = args.slice(1)[0];
+    var amount : number = parseInt(args.slice(1)[0]);
     var interprets = args.slice(2).join(" ").split("|");
 
     var matches = await this.GetMatchingSongsFromPlaylist(
@@ -234,10 +234,10 @@ export class InputHandler {
 
     return toQueue;
   }
-  async debug(message, serverQueue) {
+  async debug(message: Message, serverQueue) {
     const args = message.content.split(" ");
     const amount = args.slice(1)[0];
-    const playlistId = args.slice(2)[0];
+    const playlistId = parseInt(args.slice(2)[0]);
     var matches = await this.getPlaylistFromDatabase(playlistId);
     var toQueue = [];
     if (amount >= matches.length) {
@@ -255,7 +255,7 @@ export class InputHandler {
     return toQueue;
   }
 
-  async getPlaylistFromDatabase(playlistId) {
+  async getPlaylistFromDatabase(playlistId : number) {
     const QUERY = `DECLARE	@return_value int
 
   EXEC	@return_value = [dbo].[GetSongsByPlaylistId]
@@ -270,7 +270,7 @@ export class InputHandler {
     return result.recordset;
   }
 
-  isValidHttpUrl(string) {
+  isValidHttpUrl(string : string) {
     let url;
 
     try {
@@ -304,11 +304,11 @@ export class InputHandler {
     };
   }
 
-  getNthWord(text, n) {
+  getNthWord(text : string, n : number) {
     return text.split(" ")[n - 1];
   }
 
-  getSpotifyPlaylistId(link) {
+  getSpotifyPlaylistId(link : string) {
     // https://open.spotify.com/playlist/7ktaQvt898S3BYWkO90gFu?si=54b6547bf49a4d87
     var a = link.split("/");
     var b = a.slice(-1)[0];
@@ -383,7 +383,7 @@ export class InputHandler {
     return this.queue.delete(guildId);
   }
 
-  async queueAdd(id : string, serverQueue, message) {
+  async queueAdd(id : string, serverQueue, message : Message) {
     let arg = "https://www.youtube.com/watch?v=" + id;
 
     const songInfo = await this.getSongInfo(arg);
@@ -397,13 +397,13 @@ export class InputHandler {
     return this.sendAddedToQueue(message.channel, song);
   }
 
-  async getSongInfo(arg) {
+  async getSongInfo(songArgs : string) {
     //arg += ' lyrics -live -karaoke';
-    if (this.isValidHttpUrl(arg)) {
-      return await ytdl.getInfo(arg);
+    if (this.isValidHttpUrl(songArgs)) {
+      return await ytdl.getInfo(songArgs);
       //TODO: handle youtube searcher
     } else {
-      let liste = await ytMusic.searchMusics(arg);
+      let liste = await ytMusic.searchMusics(songArgs);
       if (liste.length == 0) {
         return await ytdl.getInfo(
           "https://www.youtube.com/watch?v=lYBUbBu4W08"
@@ -414,7 +414,7 @@ export class InputHandler {
     }
   }
 
-  async getPlaylistInfo(arg) {
+  async getPlaylistInfo(arg : string) {
     if (this.isValidHttpUrl(arg)) {
       let liste = await (
         await youtubesearchapi.GetPlaylistData(arg.split("=")[1])
@@ -473,7 +473,7 @@ export class InputHandler {
   sendAddedToQueue(channel, song) {
     return channel.send(`${song.title} wurde zur Queue hinzugefügt!`);
   }
-  sayCommand(message) {
+  sayCommand(message: Message) {
     const answer = message.content.slice(5);
     message.channel.send(answer);
     message.delete();
@@ -502,7 +502,7 @@ export class InputHandler {
     return hacky.access_token;
   }
 
-  doRequest(url) {
+  doRequest(url : string) {
     return new Promise(function (resolve, reject) {
       request.post(url, function (error, res, body) {
         if (!error && res.statusCode == 200) {
