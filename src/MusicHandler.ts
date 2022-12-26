@@ -136,4 +136,8 @@ export class MusicHandler {
       return await liste; //ytdl.getInfo(url);
     }
   }
+
+  public static async spotify(playlistId: string, amount: number) {
+    return await MusicHandler.GetRandomSongsFromPlaylist(playlistId, amount);
+  }
 }

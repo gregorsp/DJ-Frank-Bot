@@ -52,7 +52,7 @@ export class CommandHandler {
         ? parseInt(Helper.getNthWord(message.content, 2))
         : 1;
     if (length > 10) length = 10;
-    var titles = await this.spotify("30YalNqYddehoSL44yETCo", length);
+    var titles = await MusicHandler.spotify("30YalNqYddehoSL44yETCo", length);
     for (let i = 0; i < titles.length; i++) {
       message.content = ".p " + titles[i];
       // message.reply(message.content)
@@ -82,7 +82,7 @@ export class CommandHandler {
       message.reply(ex);
     }
 
-    var titles = await this.spotify(spotId, count);
+    var titles = await MusicHandler.spotify(spotId, count);
     for (let i = 0; i < titles.length; i++) {
       message.content = ".p " + titles[i];
       // message.reply(message.content)
@@ -169,9 +169,7 @@ export class CommandHandler {
     message.delete();
   }
 
-  async spotify(playlistId: string, amount: number) {
-    return await MusicHandler.GetRandomSongsFromPlaylist(playlistId, amount);
-  }
+
 
   async fabian(message: Message, playlistId: string) {
     const args = message.content.split(" ");
