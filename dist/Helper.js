@@ -38,6 +38,13 @@ var Helper = /** @class */ (function () {
         var d = c.slice(0)[0];
         return d;
     };
+    Helper.songInfoToSongObject = function (songInfo) {
+        return {
+            title: songInfo.videoDetails.title,
+            url: songInfo.videoDetails.video_url,
+            videoDetails: songInfo.videoDetails,
+        };
+    };
     return Helper;
 }());
 exports.Helper = Helper;

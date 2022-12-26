@@ -37,12 +37,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommandHandler = void 0;
-var ytdl = require("ytdl-core");
 var DatabaseHandler_1 = require("./DatabaseHandler");
 var Helper_1 = require("./Helper");
 var MusicHandler_1 = require("./MusicHandler");
 var QueueHandler_1 = require("./QueueHandler");
-var MessageHandler_1 = require("./MessageHandler");
+var Player_1 = require("./Player");
 var CommandHandler = /** @class */ (function () {
     function CommandHandler() {
     }
@@ -119,7 +118,7 @@ var CommandHandler = /** @class */ (function () {
                             : 1;
                         if (length > 10)
                             length = 10;
-                        return [4 /*yield*/, this.spotify("30YalNqYddehoSL44yETCo", length)];
+                        return [4 /*yield*/, MusicHandler_1.MusicHandler.spotify("30YalNqYddehoSL44yETCo", length)];
                     case 1:
                         titles = _a.sent();
                         i = 0;
@@ -186,7 +185,7 @@ var CommandHandler = /** @class */ (function () {
                         catch (ex) {
                             message.reply(ex);
                         }
-                        return [4 /*yield*/, this.spotify(spotId, count)];
+                        return [4 /*yield*/, MusicHandler_1.MusicHandler.spotify(spotId, count)];
                     case 1:
                         titles = _a.sent();
                         i = 0;
@@ -226,11 +225,11 @@ var CommandHandler = /** @class */ (function () {
                         return [4 /*yield*/, MusicHandler_1.MusicHandler.getSongInfo(args.slice(1).join(" "))];
                     case 1:
                         songInfo = _a.sent();
-                        song = this.songInfoToSongObject(songInfo);
+                        song = Helper_1.Helper.songInfoToSongObject(songInfo);
                         if (!serverQueue) {
                             serverQueue = QueueHandler_1.QueueHandler.setServerQueue(message);
                             serverQueue.songs.push(song);
-                            this.tryPlay(voiceChannel, serverQueue, message);
+                            Player_1.Player.tryPlay(voiceChannel, serverQueue, message);
                         }
                         else {
                             serverQueue.songs.push(song);
@@ -295,7 +294,7 @@ var CommandHandler = /** @class */ (function () {
                         return [3 /*break*/, 2];
                     case 5:
                         if (emptyQueue) {
-                            this.tryPlay(voiceChannel, serverQueue, message);
+                            Player_1.Player.tryPlay(voiceChannel, serverQueue, message);
                         }
                         return [2 /*return*/];
                 }
@@ -306,16 +305,6 @@ var CommandHandler = /** @class */ (function () {
         var answer = message.content.slice(5);
         message.channel.send(answer);
         message.delete();
-    };
-    CommandHandler.prototype.spotify = function (playlistId, amount) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, MusicHandler_1.MusicHandler.GetRandomSongsFromPlaylist(playlistId, amount)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
     };
     CommandHandler.prototype.fabian = function (message, playlistId) {
         return __awaiter(this, void 0, void 0, function () {
@@ -348,83 +337,6 @@ var CommandHandler = /** @class */ (function () {
                 }
             });
         });
-    };
-    CommandHandler.prototype.songInfoToSongObject = function (songInfo) {
-        return {
-            title: songInfo.videoDetails.title,
-            url: songInfo.videoDetails.video_url,
-            videoDetails: songInfo.videoDetails,
-        };
-    };
-    CommandHandler.prototype.tryPlay = function (voiceChannel, serverQueue, message) {
-        return __awaiter(this, void 0, void 0, function () {
-            var errCounter, connection, err_1, err_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        errCounter = 0;
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 8, , 9]);
-                        _a.label = 2;
-                    case 2:
-                        if (!(errCounter < 3)) return [3 /*break*/, 7];
-                        _a.label = 3;
-                    case 3:
-                        _a.trys.push([3, 5, , 6]);
-                        return [4 /*yield*/, voiceChannel.join()];
-                    case 4:
-                        connection = _a.sent();
-                        connection.on("disconnect", function (event) {
-                            QueueHandler_1.QueueHandler.queueDelete(message.guild.id);
-                            message.channel.send("Die Party ist vorbei!");
-                        });
-                        serverQueue.connection = connection;
-                        this.reallyPlay(message.guild, serverQueue.songs[0]);
-                        errCounter = 10000;
-                        return [3 /*break*/, 6];
-                    case 5:
-                        err_1 = _a.sent();
-                        if (errCounter == 3) {
-                            throw err_1;
-                        }
-                        console.log(err_1);
-                        errCounter++;
-                        return [3 /*break*/, 6];
-                    case 6: return [3 /*break*/, 2];
-                    case 7: return [3 /*break*/, 9];
-                    case 8:
-                        err_2 = _a.sent();
-                        console.log(err_2);
-                        QueueHandler_1.QueueHandler.queueDelete(message.guild.id);
-                        return [2 /*return*/, message.channel.send(err_2)];
-                    case 9: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    CommandHandler.prototype.reallyPlay = function (guild, song) {
-        var _this = this;
-        var serverQueue = QueueHandler_1.QueueHandler.queueGet(guild.id);
-        if (!song) {
-            serverQueue.voiceChannel.leave();
-            QueueHandler_1.QueueHandler.queueDelete(guild.id);
-            return;
-        }
-        var dispatcher = serverQueue.connection
-            .play(ytdl(song.url, { quality: "highestaudio", highWaterMark: 1 << 25 }))
-            .on("finish", function () {
-            serverQueue.songs.shift();
-            _this.reallyPlay(guild, serverQueue.songs[0]);
-        })
-            .on("error", function (error) {
-            console.error(error);
-            serverQueue.textChannel.send("Fehler beim abspielen:\n" + error);
-            // serverQueue.songs.shift();
-            _this.reallyPlay(guild, serverQueue.songs[0]);
-        });
-        dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-        MessageHandler_1.MessageHandler.sendSongToChat(serverQueue, song);
     };
     return CommandHandler;
 }());

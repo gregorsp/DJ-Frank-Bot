@@ -34,4 +34,11 @@ export class Helper {
     var d = c.slice(0)[0];
     return d;
   }
+  public static songInfoToSongObject(songInfo) {
+    return {
+      title: songInfo.videoDetails.title,
+      url: songInfo.videoDetails.video_url,
+      videoDetails: songInfo.videoDetails,
+    };
+  }
 }

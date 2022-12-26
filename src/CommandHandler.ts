@@ -2,13 +2,12 @@ import discord = require("discord.js");
 import { Client, Intents, Message } from "discord.js";
 import { MessageEmbed } from "discord.js";
 import fs = require("fs");
-import ytdl = require("ytdl-core");
 import { DatabaseHandler } from "./DatabaseHandler";
 import { Helper } from "./Helper";
 import { MusicHandler } from "./MusicHandler";
 import { QueueHandler } from "./QueueHandler";
-import { MessageHandler } from "./MessageHandler";
-
+import { Player
+ } from "./Player";
 export class CommandHandler {
   public async debugCommand(message: discord.Message) {
     var matches = await this.debug(message);
@@ -104,12 +103,12 @@ export class CommandHandler {
     //const songInfo = await getInfo(args.slice(1).join(" "));
     const songInfo = await MusicHandler.getSongInfo(args.slice(1).join(" "));
     //console.log(songInfo2);
-    const song = this.songInfoToSongObject(songInfo);
+    const song = Helper.songInfoToSongObject(songInfo);
 
     if (!serverQueue) {
       serverQueue = QueueHandler.setServerQueue(message);
       serverQueue.songs.push(song);
-      this.tryPlay(voiceChannel, serverQueue, message);
+      Player.tryPlay(voiceChannel, serverQueue, message);
     } else {
       serverQueue.songs.push(song);
       return message.channel.send(`${song.title} wurde zur Queue hinzugefügt!`);
@@ -159,7 +158,7 @@ export class CommandHandler {
       await QueueHandler.queueAdd(playlistInfo[i].id, serverQueue, message);
     }
     if (emptyQueue) {
-      this.tryPlay(voiceChannel, serverQueue, message);
+      Player.tryPlay(voiceChannel, serverQueue, message);
     }
   }
 
@@ -168,8 +167,6 @@ export class CommandHandler {
     message.channel.send(answer);
     message.delete();
   }
-
-
 
   async fabian(message: Message, playlistId: string) {
     const args = message.content.split(" ");
@@ -196,67 +193,5 @@ export class CommandHandler {
     }
 
     return toQueue;
-  }
-
-  songInfoToSongObject(songInfo) {
-    return {
-      title: songInfo.videoDetails.title,
-      url: songInfo.videoDetails.video_url,
-      videoDetails: songInfo.videoDetails,
-    };
-  }
-
-  async tryPlay(voiceChannel, serverQueue, message: Message) {
-    let errCounter = 0;
-    try {
-      while (errCounter < 3) {
-        try {
-          var connection = await voiceChannel.join();
-          connection.on("disconnect", (event) => {
-            QueueHandler.queueDelete(message.guild.id);
-            message.channel.send("Die Party ist vorbei!");
-          });
-          serverQueue.connection = connection;
-          this.reallyPlay(message.guild, serverQueue.songs[0]);
-          errCounter = 10000;
-        } catch (err) {
-          if (errCounter == 3) {
-            throw err;
-          }
-          console.log(err);
-
-          errCounter++;
-        }
-      }
-    } catch (err) {
-      console.log(err);
-      QueueHandler.queueDelete(message.guild.id);
-      return message.channel.send(err);
-    }
-  }
-
-  reallyPlay(guild: discord.Guild, song) {
-    const serverQueue = QueueHandler.queueGet(guild.id);
-    if (!song) {
-      serverQueue.voiceChannel.leave();
-      QueueHandler.queueDelete(guild.id);
-      return;
-    }
-
-    const dispatcher = serverQueue.connection
-      .play(ytdl(song.url, { quality: "highestaudio", highWaterMark: 1 << 25 }))
-      .on("finish", () => {
-        serverQueue.songs.shift();
-        this.reallyPlay(guild, serverQueue.songs[0]);
-      })
-      .on("error", (error) => {
-        console.error(error);
-        serverQueue.textChannel.send("Fehler beim abspielen:\n" + error);
-        // serverQueue.songs.shift();
-        this.reallyPlay(guild, serverQueue.songs[0]);
-      });
-    dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-
-    MessageHandler.sendSongToChat(serverQueue, song);
   }
 }
