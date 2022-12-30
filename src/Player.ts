@@ -33,7 +33,7 @@ export class Player {
         return message.channel.send(err);
       }
     }
-    public static reallyPlay(guild: discord.Guild, song) {
+    private static reallyPlay(guild: discord.Guild, song) {
         const serverQueue = QueueHandler.queueGet(guild.id);
         if (!song) {
           serverQueue.voiceChannel.leave();
