@@ -43,24 +43,49 @@ var ytdl = require("ytdl-core");
 var Player = /** @class */ (function () {
     function Player() {
     }
+    Player.play_or_queue = function (voiceChannel, message, song) {
+        return __awaiter(this, void 0, void 0, function () {
+            var serverQueue;
+            return __generator(this, function (_a) {
+                serverQueue = QueueHandler_1.QueueHandler.queueGet(message.guild.id);
+                if (!serverQueue) {
+                    serverQueue = QueueHandler_1.QueueHandler.setServerQueue(message);
+                    serverQueue.songs.push(song);
+                    Player.tryPlay(voiceChannel, serverQueue, message);
+                }
+                else {
+                    QueueHandler_1.QueueHandler.queueAdd(message, null, song);
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    Player.AttachInFront = function (voiceChannel, message, song) {
+        return __awaiter(this, void 0, void 0, function () {
+            var serverQueue;
+            return __generator(this, function (_a) {
+                serverQueue = QueueHandler_1.QueueHandler.queueGet(message.guild.id);
+                if (!serverQueue) {
+                    console.log("No server queue");
+                    console.log("war keine queue vorhanden?");
+                    serverQueue = QueueHandler_1.QueueHandler.setServerQueue(message);
+                    serverQueue.songs.push(song);
+                    Player.tryPlay(voiceChannel, serverQueue, message);
+                }
+                else {
+                    QueueHandler_1.QueueHandler.queueAddInFront(message, null, song);
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
     Player.tryPlay = function (voiceChannel, serverQueue, message) {
         return __awaiter(this, void 0, void 0, function () {
-            var errCounter, connection, err_1, err_2;
+            var connection;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        errCounter = 0;
-                        _a.label = 1;
+                    case 0: return [4 /*yield*/, voiceChannel.join()];
                     case 1:
-                        _a.trys.push([1, 8, , 9]);
-                        _a.label = 2;
-                    case 2:
-                        if (!(errCounter < 3)) return [3 /*break*/, 7];
-                        _a.label = 3;
-                    case 3:
-                        _a.trys.push([3, 5, , 6]);
-                        return [4 /*yield*/, voiceChannel.join()];
-                    case 4:
                         connection = _a.sent();
                         connection.on("disconnect", function (event) {
                             QueueHandler_1.QueueHandler.queueDelete(message.guild.id);
@@ -68,24 +93,7 @@ var Player = /** @class */ (function () {
                         });
                         serverQueue.connection = connection;
                         this.reallyPlay(message.guild, serverQueue.songs[0]);
-                        errCounter = 10000;
-                        return [3 /*break*/, 6];
-                    case 5:
-                        err_1 = _a.sent();
-                        if (errCounter == 3) {
-                            throw err_1;
-                        }
-                        console.log(err_1);
-                        errCounter++;
-                        return [3 /*break*/, 6];
-                    case 6: return [3 /*break*/, 2];
-                    case 7: return [3 /*break*/, 9];
-                    case 8:
-                        err_2 = _a.sent();
-                        console.log(err_2);
-                        QueueHandler_1.QueueHandler.queueDelete(message.guild.id);
-                        return [2 /*return*/, message.channel.send(err_2)];
-                    case 9: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
         });
@@ -101,10 +109,12 @@ var Player = /** @class */ (function () {
         var dispatcher = serverQueue.connection
             .play(ytdl(song.url, { quality: "highestaudio", highWaterMark: 1 << 25 }))
             .on("finish", function () {
+            var serverQueue = QueueHandler_1.QueueHandler.queueGet(guild.id);
             serverQueue.songs.shift();
             _this.reallyPlay(guild, serverQueue.songs[0]);
         })
             .on("error", function (error) {
+            var serverQueue = QueueHandler_1.QueueHandler.queueGet(guild.id);
             console.error(error);
             serverQueue.textChannel.send("Fehler beim abspielen:\n" + error);
             // serverQueue.songs.shift();

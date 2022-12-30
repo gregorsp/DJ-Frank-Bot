@@ -19,6 +19,9 @@ export class InputHandler {
         if (message.content.length <= 6) return;
         this.cmd.playCommand(message);
         break;
+      case "forceplay":
+          this.cmd.forcePlayCommand(message);
+          break;
       case "playlist":
         this.cmd.playlistCommand(message);
         break;

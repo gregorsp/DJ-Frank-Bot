@@ -79,13 +79,12 @@ var CommandHandler = /** @class */ (function () {
     };
     CommandHandler.prototype.debug = function (message) {
         return __awaiter(this, void 0, void 0, function () {
-            var args, amount, playlistId, matches, toQueue, i;
+            var amount, playlistId, matches, toQueue, i;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        args = message.content.split(" ");
-                        amount = args.slice(1)[0];
-                        playlistId = parseInt(args.slice(2)[0]);
+                        amount = Helper_1.Helper.getArgSlice(message, 1);
+                        playlistId = parseInt(Helper_1.Helper.getArgSlice(message, 1));
                         return [4 /*yield*/, DatabaseHandler_1.DatabaseHandler.getPlaylistFromDatabase(playlistId)];
                     case 1:
                         matches = _a.sent();
@@ -209,12 +208,10 @@ var CommandHandler = /** @class */ (function () {
     };
     CommandHandler.prototype.playCommand = function (message) {
         return __awaiter(this, void 0, void 0, function () {
-            var serverQueue, args, voiceChannel, permissions, songInfo, song;
+            var voiceChannel, permissions, songInfo, song;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        serverQueue = QueueHandler_1.QueueHandler.queueGet(message.guild.id);
-                        args = message.content.split(" ");
                         voiceChannel = message.member.voice.channel;
                         if (!voiceChannel)
                             return [2 /*return*/, message.channel.send("Du bist in keinem Voice.")];
@@ -222,19 +219,34 @@ var CommandHandler = /** @class */ (function () {
                         if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
                             return [2 /*return*/, message.channel.send("Mir fehlen Rechte!")];
                         }
-                        return [4 /*yield*/, MusicHandler_1.MusicHandler.getSongInfo(args.slice(1).join(" "))];
+                        return [4 /*yield*/, MusicHandler_1.MusicHandler.getSongInfo(Helper_1.Helper.getArgSlices(message, 1).join(" "))];
                     case 1:
                         songInfo = _a.sent();
                         song = Helper_1.Helper.songInfoToSongObject(songInfo);
-                        if (!serverQueue) {
-                            serverQueue = QueueHandler_1.QueueHandler.setServerQueue(message);
-                            serverQueue.songs.push(song);
-                            Player_1.Player.tryPlay(voiceChannel, serverQueue, message);
+                        Player_1.Player.play_or_queue(voiceChannel, message, song);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CommandHandler.prototype.forcePlayCommand = function (message) {
+        return __awaiter(this, void 0, void 0, function () {
+            var voiceChannel, permissions, songInfo, song;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        voiceChannel = message.member.voice.channel;
+                        if (!voiceChannel)
+                            return [2 /*return*/, message.channel.send("Du bist in keinem Voice.")];
+                        permissions = voiceChannel.permissionsFor(message.client.user);
+                        if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+                            return [2 /*return*/, message.channel.send("Mir fehlen Rechte!")];
                         }
-                        else {
-                            serverQueue.songs.push(song);
-                            return [2 /*return*/, message.channel.send("".concat(song.title, " wurde zur Queue hinzugef\u00FCgt!"))];
-                        }
+                        return [4 /*yield*/, MusicHandler_1.MusicHandler.getSongInfo(Helper_1.Helper.getArgSlices(message, 1).join(" "))];
+                    case 1:
+                        songInfo = _a.sent();
+                        song = Helper_1.Helper.songInfoToSongObject(songInfo);
+                        Player_1.Player.AttachInFront(voiceChannel, message, song);
                         return [2 /*return*/];
                 }
             });
@@ -259,12 +271,10 @@ var CommandHandler = /** @class */ (function () {
     };
     CommandHandler.prototype.playlistCommand = function (message) {
         return __awaiter(this, void 0, void 0, function () {
-            var serverQueue, args, voiceChannel, permissions, playlistInfo, emptyQueue, i;
+            var voiceChannel, permissions, playlistInfo, i, song;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        serverQueue = QueueHandler_1.QueueHandler.queueGet(message.guild.id);
-                        args = message.content.split(" ");
                         voiceChannel = message.member.voice.channel;
                         if (!voiceChannel)
                             return [2 /*return*/, message.channel.send("Du bist in keinem Voice.")];
@@ -272,31 +282,22 @@ var CommandHandler = /** @class */ (function () {
                         if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
                             return [2 /*return*/, message.channel.send("Mir fehlen Rechte!")];
                         }
-                        return [4 /*yield*/, MusicHandler_1.MusicHandler.getPlaylistInfo(args.slice(1).join(" "))];
+                        return [4 /*yield*/, MusicHandler_1.MusicHandler.getPlaylistInfo(Helper_1.Helper.getArgSlices(message, 1).join(" "))];
                     case 1:
                         playlistInfo = _a.sent();
-                        console.log(playlistInfo);
-                        emptyQueue = false;
-                        if (!serverQueue) {
-                            serverQueue = QueueHandler_1.QueueHandler.setServerQueue(message);
-                            emptyQueue = true;
-                        }
                         i = 0;
                         _a.label = 2;
                     case 2:
                         if (!(i < playlistInfo.length)) return [3 /*break*/, 5];
-                        return [4 /*yield*/, QueueHandler_1.QueueHandler.queueAdd(playlistInfo[i].id, serverQueue, message)];
+                        return [4 /*yield*/, Helper_1.Helper.youtubeIdToSongObject(playlistInfo[i].id)];
                     case 3:
-                        _a.sent();
+                        song = _a.sent();
+                        Player_1.Player.play_or_queue(voiceChannel, message, song);
                         _a.label = 4;
                     case 4:
                         i++;
                         return [3 /*break*/, 2];
-                    case 5:
-                        if (emptyQueue) {
-                            Player_1.Player.tryPlay(voiceChannel, serverQueue, message);
-                        }
-                        return [2 /*return*/];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -308,13 +309,12 @@ var CommandHandler = /** @class */ (function () {
     };
     CommandHandler.prototype.fabian = function (message, playlistId) {
         return __awaiter(this, void 0, void 0, function () {
-            var args, amount, interprets, matches, toQueue, i;
+            var amount, interprets, matches, toQueue, i;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        args = message.content.split(" ");
-                        amount = parseInt(args.slice(1)[0]);
-                        interprets = args.slice(2).join(" ").split("|");
+                        amount = parseInt(Helper_1.Helper.getArgSlice(message, 1));
+                        interprets = Helper_1.Helper.getArgSlices(message, 2).join(" ").split("|");
                         return [4 /*yield*/, MusicHandler_1.MusicHandler.GetMatchingSongsFromPlaylist(playlistId, interprets)];
                     case 1:
                         matches = _a.sent();

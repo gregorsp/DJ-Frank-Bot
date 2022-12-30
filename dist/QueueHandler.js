@@ -37,8 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueueHandler = void 0;
-var MusicHandler_1 = require("./MusicHandler");
 var MessageHandler_1 = require("./MessageHandler");
+var Helper_1 = require("./Helper");
 var QueueHandler = /** @class */ (function () {
     function QueueHandler() {
     }
@@ -51,22 +51,44 @@ var QueueHandler = /** @class */ (function () {
     QueueHandler.queueDelete = function (guildId) {
         return this.queue.delete(guildId);
     };
-    QueueHandler.queueAdd = function (id, serverQueue, message) {
+    QueueHandler.queueAdd = function (message, id, song) {
+        if (id === void 0) { id = null; }
+        if (song === void 0) { song = null; }
         return __awaiter(this, void 0, void 0, function () {
-            var arg, songInfo, song;
+            var serverQueue;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        arg = "https://www.youtube.com/watch?v=" + id;
-                        return [4 /*yield*/, MusicHandler_1.MusicHandler.getSongInfo(arg)];
+                        if (!(id !== null)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, Helper_1.Helper.youtubeIdToSongObject(id)];
                     case 1:
-                        songInfo = _a.sent();
-                        song = {
-                            title: songInfo.videoDetails.title,
-                            url: songInfo.videoDetails.video_url,
-                            videoDetails: songInfo.videoDetails,
-                        };
+                        song = _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        serverQueue = this.queueGet(message.guild.id);
                         serverQueue.songs.push(song);
+                        return [2 /*return*/, MessageHandler_1.MessageHandler.sendAddedToQueue(message.channel, song)];
+                }
+            });
+        });
+    };
+    QueueHandler.queueAddInFront = function (message, id, song) {
+        if (id === void 0) { id = null; }
+        if (song === void 0) { song = null; }
+        return __awaiter(this, void 0, void 0, function () {
+            var serverQueue;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(id !== null)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, Helper_1.Helper.youtubeIdToSongObject(id)];
+                    case 1:
+                        song = _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        serverQueue = this.queueGet(message.guild.id);
+                        serverQueue.songs = [song].concat(serverQueue.songs);
+                        this.queueSet(message.guild.id, serverQueue);
                         return [2 /*return*/, MessageHandler_1.MessageHandler.sendAddedToQueue(message.channel, song)];
                 }
             });

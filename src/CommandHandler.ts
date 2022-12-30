@@ -25,9 +25,8 @@ export class CommandHandler {
   }
 
   private async debug(message: Message) {
-    const args = message.content.split(" ");
-    const amount = args.slice(1)[0];
-    const playlistId = parseInt(args.slice(2)[0]);
+    const amount = Helper.getArgSlice(message, 1);
+    const playlistId = parseInt(Helper.getArgSlice(message, 1));
     var matches = await DatabaseHandler.getPlaylistFromDatabase(playlistId);
     var toQueue = [];
     if (amount >= matches.length) {
@@ -89,9 +88,6 @@ export class CommandHandler {
     }
   }
   async playCommand(message: Message) {
-    var serverQueue = QueueHandler.queueGet(message.guild.id);
-    const args = message.content.split(" ");
-
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.channel.send("Du bist in keinem Voice.");
     const permissions = voiceChannel.permissionsFor(message.client.user);
@@ -101,18 +97,26 @@ export class CommandHandler {
 
     //const songInfo = await ytdl.getInfo(args[1]);
     //const songInfo = await getInfo(args.slice(1).join(" "));
-    const songInfo = await MusicHandler.getSongInfo(args.slice(1).join(" "));
+    const songInfo = await MusicHandler.getSongInfo(Helper.getArgSlices(message, 1).join(" "));
     //console.log(songInfo2);
     const song = Helper.songInfoToSongObject(songInfo);
 
-    if (!serverQueue) {
-      serverQueue = QueueHandler.setServerQueue(message);
-      serverQueue.songs.push(song);
-      Player.tryPlay(voiceChannel, serverQueue, message);
-    } else {
-      serverQueue.songs.push(song);
-      return message.channel.send(`${song.title} wurde zur Queue hinzugefügt!`);
+    Player.play_or_queue(voiceChannel, message, song);
+  }
+
+  async forcePlayCommand(message: Message) {
+    const voiceChannel = message.member.voice.channel;
+    if (!voiceChannel) return message.channel.send("Du bist in keinem Voice.");
+    const permissions = voiceChannel.permissionsFor(message.client.user);
+    if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+      return message.channel.send("Mir fehlen Rechte!");
     }
+
+    const songInfo = await MusicHandler.getSongInfo(Helper.getArgSlices(message, 1).join(" "));
+    //console.log(songInfo2);
+    const song = Helper.songInfoToSongObject(songInfo);
+
+    Player.AttachInFront(voiceChannel, message, song);
   }
 
   skipCommand(message: Message) {
@@ -135,9 +139,6 @@ export class CommandHandler {
   }
 
   async playlistCommand(message: Message) {
-    var serverQueue = QueueHandler.queueGet(message.guild.id);
-    const args = message.content.split(" ");
-
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.channel.send("Du bist in keinem Voice.");
     const permissions = voiceChannel.permissionsFor(message.client.user);
@@ -146,20 +147,14 @@ export class CommandHandler {
     }
 
     const playlistInfo = await MusicHandler.getPlaylistInfo(
-      args.slice(1).join(" ")
+      Helper.getArgSlices(message, 1).join(" ")
     );
-    console.log(playlistInfo);
-    var emptyQueue = false;
-    if (!serverQueue) {
-      serverQueue = QueueHandler.setServerQueue(message);
-      emptyQueue = true;
-    }
+
     for (let i = 0; i < playlistInfo.length; i++) {
-      await QueueHandler.queueAdd(playlistInfo[i].id, serverQueue, message);
+      let song = await Helper.youtubeIdToSongObject(playlistInfo[i].id);
+      Player.play_or_queue(voiceChannel, message, song);
     }
-    if (emptyQueue) {
-      Player.tryPlay(voiceChannel, serverQueue, message);
-    }
+
   }
 
   sayCommand(message: Message) {
@@ -169,9 +164,8 @@ export class CommandHandler {
   }
 
   async fabian(message: Message, playlistId: string) {
-    const args = message.content.split(" ");
-    var amount: number = parseInt(args.slice(1)[0]);
-    var interprets = args.slice(2).join(" ").split("|");
+    var amount: number = parseInt(Helper.getArgSlice(message, 1));
+    var interprets = Helper.getArgSlices(message, 2).join(" ").split("|");
 
     var matches = await MusicHandler.GetMatchingSongsFromPlaylist(
       playlistId,

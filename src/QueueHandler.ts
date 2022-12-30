@@ -1,7 +1,8 @@
 import { MusicHandler } from "./MusicHandler";
 import { MessageHandler } from "./MessageHandler";
 import { Message } from "discord.js";
-
+import { Song } from './interfaces';
+import { Helper } from "./Helper";
 export class QueueHandler {
   private static queue: Map<string, any> = new Map();
 
@@ -17,19 +18,24 @@ export class QueueHandler {
     return this.queue.delete(guildId);
   }
 
-  public static async queueAdd(id: string, serverQueue, message: Message) {
-    let arg = "https://www.youtube.com/watch?v=" + id;
-
-    const songInfo = await MusicHandler.getSongInfo(arg);
-    const song = {
-      title: songInfo.videoDetails.title,
-      url: songInfo.videoDetails.video_url,
-      videoDetails: songInfo.videoDetails,
-    };
-
+  public static async queueAdd(message: Message, id: string = null, song : Song = null) {
+    if (id !== null) {
+      song = await Helper.youtubeIdToSongObject(id);
+    }
+    let serverQueue = this.queueGet(message.guild.id);
     serverQueue.songs.push(song);
     return MessageHandler.sendAddedToQueue(message.channel, song);
   }
+  public static async queueAddInFront(message: Message, id: string = null, song : Song = null) {
+    if (id !== null) {
+      song = await Helper.youtubeIdToSongObject(id);
+    }
+    let serverQueue = this.queueGet(message.guild.id);
+    serverQueue.songs = [song].concat(serverQueue.songs);
+    this.queueSet(message.guild.id, serverQueue);
+    return MessageHandler.sendAddedToQueue(message.channel, song);
+  }
+  
   static setServerQueue(message: Message) {
     const queueContruct = {
       textChannel: message.channel,

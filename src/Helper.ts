@@ -1,5 +1,7 @@
 import request = require("request");
-
+import { Song } from "./interfaces";
+import { MusicHandler } from "./MusicHandler";
+import { Message } from "discord.js";
 export class Helper {
   static doRequest(url) {
     return new Promise(function (resolve, reject) {
@@ -34,11 +36,29 @@ export class Helper {
     var d = c.slice(0)[0];
     return d;
   }
-  public static songInfoToSongObject(songInfo) {
+  public static songInfoToSongObject(songInfo) : Song {
     return {
       title: songInfo.videoDetails.title,
       url: songInfo.videoDetails.video_url,
       videoDetails: songInfo.videoDetails,
     };
+  }
+  public static async youtubeIdToSongObject(youtubeId: string) : Promise<Song> {
+    let arg = "https://www.youtube.com/watch?v=" + youtubeId;
+  
+    const songInfo = await MusicHandler.getSongInfo(arg);
+    return new Song(songInfo.videoDetails.title, songInfo.videoDetails.video_url, songInfo.videoDetails);
+  }
+  public static getArgSlice(message: Message, i : number, skipFirst = false) : string{
+    if (skipFirst) {
+      i++;
+    }
+    return message.content.split(" ")[i];  
+  }
+  public static getArgSlices(message: Message, skipAmount : number = 0, skipFirst = false) : string[] {
+    if (skipFirst) {
+      skipAmount++;
+    }
+    return message.content.split(" ").slice(skipAmount);  
   }
 }
