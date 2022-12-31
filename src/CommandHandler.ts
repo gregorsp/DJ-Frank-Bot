@@ -8,6 +8,18 @@ import { MusicHandler } from "./MusicHandler";
 import { QueueHandler } from "./QueueHandler";
 import { Player } from "./Player";
 export class CommandHandler {
+  queueCommand(message: discord.Message) {
+    let serverQueue = QueueHandler.queueGet(message.guild.id);
+    if (!serverQueue) {
+      return message.channel.send("Es wird nichts abgespielt...");
+    } else {
+      let returnString = "In der Warteschlange:\n";
+      for (let i = 1; i < serverQueue.songs.length; i++) {
+        returnString += i + ". : " + serverQueue.songs[i].title + "\n";
+      }
+      message.reply(returnString);
+    }
+  }
   public async debugCommand(message: discord.Message) {
     var matches = await this.debug(message);
     for (let i = 0; i < matches.length; i++) {

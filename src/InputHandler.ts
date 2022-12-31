@@ -25,6 +25,13 @@ export class InputHandler {
       case "playlist":
         this.cmd.playlistCommand(message);
         break;
+      case "q":
+      case "queue":
+      case "inqueue":
+      case "warteschlange":
+      case "next":
+        this.cmd.queueCommand(message);
+        break;
       case "skip":
       case "next":
       case "s":

@@ -45,6 +45,19 @@ var Player_1 = require("./Player");
 var CommandHandler = /** @class */ (function () {
     function CommandHandler() {
     }
+    CommandHandler.prototype.queueCommand = function (message) {
+        var serverQueue = QueueHandler_1.QueueHandler.queueGet(message.guild.id);
+        if (!serverQueue) {
+            return message.channel.send("Es wird nichts abgespielt...");
+        }
+        else {
+            var returnString = "In der Warteschlange:\n";
+            for (var i = 1; i < serverQueue.songs.length; i++) {
+                returnString += i + ". : " + serverQueue.songs[i].title + "\n";
+            }
+            message.reply(returnString);
+        }
+    };
     CommandHandler.prototype.debugCommand = function (message) {
         return __awaiter(this, void 0, void 0, function () {
             var matches, i, currentSong, PreferredYouTubeLink;
