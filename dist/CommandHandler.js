@@ -112,9 +112,7 @@ var CommandHandler = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        length = message.content.length > 8
-                            ? parseInt(Helper_1.Helper.getNthWord(message.content, 2))
-                            : 1;
+                        length = message.content.length > 8 ? parseInt(Helper_1.Helper.getNthWord(message.content, 2)) : 1;
                         if (length > 10)
                             length = 10;
                         return [4 /*yield*/, MusicHandler_1.MusicHandler.spotify("30YalNqYddehoSL44yETCo", length)];

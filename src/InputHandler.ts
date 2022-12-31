@@ -20,8 +20,8 @@ export class InputHandler {
         this.cmd.playCommand(message);
         break;
       case "forceplay":
-          this.cmd.forcePlayCommand(message);
-          break;
+        this.cmd.forcePlayCommand(message);
+        break;
       case "playlist":
         this.cmd.playlistCommand(message);
         break;

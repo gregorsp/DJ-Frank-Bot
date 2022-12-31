@@ -1,13 +1,13 @@
 import { MusicHandler } from "./MusicHandler";
 import { MessageHandler } from "./MessageHandler";
 import { Message } from "discord.js";
-import { Song } from './interfaces';
+import { Song } from "./interfaces";
 import { Helper } from "./Helper";
 import { Queue } from "./interfaces";
 export class QueueHandler {
   private static queue: Map<string, Queue> = new Map();
 
-  public static queueGet(guildId: string) : Queue{
+  public static queueGet(guildId: string): Queue {
     return this.queue.get(guildId);
   }
 
@@ -19,7 +19,7 @@ export class QueueHandler {
     return this.queue.delete(guildId);
   }
 
-  public static async queueAdd(message: Message, id: string = null, song : Song = null) {
+  public static async queueAdd(message: Message, id: string = null, song: Song = null) {
     if (id !== null) {
       song = await Helper.youtubeIdToSongObject(id);
     }
@@ -27,7 +27,7 @@ export class QueueHandler {
     serverQueue.songs.push(song);
     return MessageHandler.sendAddedToQueue(message.channel, song);
   }
-  public static async queueAddInFront(message: Message, id: string = null, song : Song = null) {
+  public static async queueAddInFront(message: Message, id: string = null, song: Song = null) {
     if (id !== null) {
       song = await Helper.youtubeIdToSongObject(id);
     }
@@ -38,9 +38,9 @@ export class QueueHandler {
     this.queueSet(message.guild.id, serverQueue);
     return MessageHandler.sendAddedToQueue(message.channel, song);
   }
-  
-  static setServerQueue(message: Message) : Queue {
-    const queueContruct : Queue = {
+
+  static setServerQueue(message: Message): Queue {
+    const queueContruct: Queue = {
       textChannel: message.channel,
       voiceChannel: message.member.voice.channel,
       connection: null,

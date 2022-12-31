@@ -1,12 +1,12 @@
 import { QueueHandler } from "./QueueHandler";
 import discord = require("discord.js");
 import { MessageHandler } from "./MessageHandler";
-import { Message, VoiceChannel } from 'discord.js';
+import { Message, VoiceChannel } from "discord.js";
 import ytdl = require("ytdl-core");
 import { Song } from "./interfaces";
 import { Queue } from "./interfaces";
 export class Player {
-  public static async play_or_queue(voiceChannel :VoiceChannel, message, song : Song) {
+  public static async play_or_queue(voiceChannel: VoiceChannel, message: Message, song: Song) {
     var serverQueue = QueueHandler.queueGet(message.guild.id);
     if (!serverQueue) {
       serverQueue = QueueHandler.setServerQueue(message);
@@ -16,11 +16,11 @@ export class Player {
       QueueHandler.queueAdd(message, null, song);
     }
   }
-  public static async AttachInFront(voiceChannel,message : Message, song :Song) {
+  public static async AttachInFront(voiceChannel: VoiceChannel, message: Message, song: Song) {
     var serverQueue = QueueHandler.queueGet(message.guild.id);
     if (!serverQueue) {
       console.log("No server queue");
-      console.log("war keine queue vorhanden?")
+      console.log("war keine queue vorhanden?");
       serverQueue = QueueHandler.setServerQueue(message);
       serverQueue.songs.push(song);
       Player.tryPlay(voiceChannel, serverQueue, message);
@@ -29,7 +29,7 @@ export class Player {
     }
   }
 
-  private static async tryPlay(voiceChannel:VoiceChannel, serverQueue : Queue, message: Message) {
+  private static async tryPlay(voiceChannel: VoiceChannel, serverQueue: Queue, message: Message) {
     var connection = await voiceChannel.join();
     connection.on("disconnect", (event) => {
       QueueHandler.queueDelete(message.guild.id);

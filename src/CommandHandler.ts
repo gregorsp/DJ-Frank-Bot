@@ -6,8 +6,7 @@ import { DatabaseHandler } from "./DatabaseHandler";
 import { Helper } from "./Helper";
 import { MusicHandler } from "./MusicHandler";
 import { QueueHandler } from "./QueueHandler";
-import { Player
- } from "./Player";
+import { Player } from "./Player";
 export class CommandHandler {
   public async debugCommand(message: discord.Message) {
     var matches = await this.debug(message);
@@ -45,10 +44,7 @@ export class CommandHandler {
   }
 
   public async randomCommand(message: discord.Message) {
-    var length =
-      message.content.length > 8
-        ? parseInt(Helper.getNthWord(message.content, 2))
-        : 1;
+    var length = message.content.length > 8 ? parseInt(Helper.getNthWord(message.content, 2)) : 1;
     if (length > 10) length = 10;
     var titles = await MusicHandler.spotify("30YalNqYddehoSL44yETCo", length);
     for (let i = 0; i < titles.length; i++) {
@@ -121,16 +117,14 @@ export class CommandHandler {
 
   skipCommand(message: Message) {
     var serverQueue = QueueHandler.queueGet(message.guild.id);
-    if (!message.member.voice.channel)
-      return message.channel.send("Du bist in keinem Voice!");
+    if (!message.member.voice.channel) return message.channel.send("Du bist in keinem Voice!");
     if (!serverQueue) return message.channel.send("Queue ist leer!");
     serverQueue.connection.dispatcher.end();
   }
 
   clearQueueCommand(message: Message) {
     var serverQueue = QueueHandler.queueGet(message.guild.id);
-    if (!message.member.voice.channel)
-      return message.channel.send("Du bist in keinem Voice!");
+    if (!message.member.voice.channel) return message.channel.send("Du bist in keinem Voice!");
 
     if (!serverQueue) return message.channel.send("Queue ist leer!");
 
@@ -146,9 +140,7 @@ export class CommandHandler {
       return message.channel.send("Mir fehlen Rechte!");
     }
 
-    const playlistInfo = await MusicHandler.getPlaylistInfo(
-      Helper.getArgSlices(message, 1).join(" ")
-    );
+    const playlistInfo = await MusicHandler.getPlaylistInfo(Helper.getArgSlices(message, 1).join(" "));
 
     for (let i = 0; i < playlistInfo.length; i++) {
       let song = await Helper.youtubeIdToSongObject(playlistInfo[i].id);
@@ -166,10 +158,7 @@ export class CommandHandler {
     var amount: number = parseInt(Helper.getArgSlice(message, 1));
     var interprets = Helper.getArgSlices(message, 2).join(" ").split("|");
 
-    var matches = await MusicHandler.GetMatchingSongsFromPlaylist(
-      playlistId,
-      interprets
-    );
+    var matches = await MusicHandler.GetMatchingSongsFromPlaylist(playlistId, interprets);
     var toQueue = [];
     if (matches.length == 0) return toQueue;
     if (amount >= matches.length) {
