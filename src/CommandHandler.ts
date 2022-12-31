@@ -154,7 +154,6 @@ export class CommandHandler {
       let song = await Helper.youtubeIdToSongObject(playlistInfo[i].id);
       Player.play_or_queue(voiceChannel, message, song);
     }
-
   }
 
   sayCommand(message: Message) {

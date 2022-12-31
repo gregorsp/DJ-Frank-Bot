@@ -1,12 +1,12 @@
 import { QueueHandler } from "./QueueHandler";
 import discord = require("discord.js");
 import { MessageHandler } from "./MessageHandler";
-import { Message } from "discord.js";
+import { Message, VoiceChannel } from 'discord.js';
 import ytdl = require("ytdl-core");
 import { Song } from "./interfaces";
-
+import { Queue } from "./interfaces";
 export class Player {
-  public static async play_or_queue(voiceChannel, message, song : Song) {
+  public static async play_or_queue(voiceChannel :VoiceChannel, message, song : Song) {
     var serverQueue = QueueHandler.queueGet(message.guild.id);
     if (!serverQueue) {
       serverQueue = QueueHandler.setServerQueue(message);
@@ -29,7 +29,7 @@ export class Player {
     }
   }
 
-  private static async tryPlay(voiceChannel, serverQueue, message: Message) {
+  private static async tryPlay(voiceChannel:VoiceChannel, serverQueue : Queue, message: Message) {
     var connection = await voiceChannel.join();
     connection.on("disconnect", (event) => {
       QueueHandler.queueDelete(message.guild.id);

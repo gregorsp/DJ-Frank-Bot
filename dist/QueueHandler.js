@@ -87,7 +87,9 @@ var QueueHandler = /** @class */ (function () {
                         _a.label = 2;
                     case 2:
                         serverQueue = this.queueGet(message.guild.id);
-                        serverQueue.songs = [song].concat(serverQueue.songs);
+                        // serverQueue.songs = [song].concat(serverQueue.songs);
+                        // create a new array with the first song fromg serverQueue.songs, then song and then concat the rest of the array
+                        serverQueue.songs = [serverQueue.songs[0], song].concat(serverQueue.songs.slice(1));
                         this.queueSet(message.guild.id, serverQueue);
                         return [2 /*return*/, MessageHandler_1.MessageHandler.sendAddedToQueue(message.channel, song)];
                 }
