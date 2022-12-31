@@ -40,7 +40,7 @@ export class QueueHandler {
   }
   
   static setServerQueue(message: Message) : Queue {
-    const queueContruct = {
+    const queueContruct : Queue = {
       textChannel: message.channel,
       voiceChannel: message.member.voice.channel,
       connection: null,
