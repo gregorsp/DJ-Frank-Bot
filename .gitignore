@@ -1,3 +1,5 @@
 discordtoken
 spotifysecret
 connectionstring
+# ignore every file in /dist
+/dist
