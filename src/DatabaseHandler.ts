@@ -3,7 +3,7 @@ const sql = require("mssql");
 const CONNECTIONSTRING = fs.readFileSync("./connectionstring", "utf8");
 
 export class DatabaseHandler {
-  static async getPlaylistFromDatabase(playlistId: number) {
+  static async getPlaylistFromDatabase(playlistId: number) : Promise<any[]>{
     const QUERY = `DECLARE	@return_value int
         
           EXEC	@return_value = [dbo].[GetSongsByPlaylistId]

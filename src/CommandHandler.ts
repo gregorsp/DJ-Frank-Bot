@@ -32,7 +32,7 @@ export class CommandHandler {
   }
 
   private async debug(message: Message) {
-    const amount = Helper.getArgSlice(message, 2);
+    const amount = parseInt(Helper.getArgSlice(message, 2));
     const playlistId = parseInt(Helper.getArgSlice(message, 1));
     var matches = await DatabaseHandler.getPlaylistFromDatabase(playlistId);
     var toQueue = [];
@@ -56,9 +56,8 @@ export class CommandHandler {
     if (length > 10) length = 10;
     var titles = await MusicHandler.spotify("30YalNqYddehoSL44yETCo", length);
     for (let i = 0; i < titles.length; i++) {
-      message.content = ".p " + titles[i];
-      // message.reply(message.content)
-      await this.playCommand(message);
+      let song = await Helper.songnameToSongObject(titles[i]);
+      Player.play_or_queue(message, song);
     }
   }
 
@@ -68,9 +67,8 @@ export class CommandHandler {
       message.reply("Gibs keine Beweise");
     }
     for (let i = 0; i < titles.length; i++) {
-      message.content = ".p " + titles[i];
-      // message.reply(message.content)
-      await this.playCommand(message);
+      let song = await Helper.songnameToSongObject(titles[i]);
+      Player.play_or_queue(message, song);
     }
   }
 
@@ -86,9 +84,8 @@ export class CommandHandler {
 
     var titles = await MusicHandler.spotify(spotId, count);
     for (let i = 0; i < titles.length; i++) {
-      message.content = ".p " + titles[i];
-      // message.reply(message.content)
-      await this.playCommand(message);
+      let song = await Helper.songnameToSongObject(titles[i]);
+      Player.play_or_queue(message, song);
     }
   }
   async playCommand(message: Message) {

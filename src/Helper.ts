@@ -72,4 +72,9 @@ export class Helper {
     let song = Helper.songInfoToSongObject(songInfo);
     return song;
   }
+  public static async songnameToSongObject(songname: string): Promise<Song> {
+    let songInfo = await MusicHandler.getSongInfo(songname);
+    let song = Helper.songInfoToSongObject(songInfo);
+    return song;
+  }
 }
