@@ -60,7 +60,7 @@ var CommandHandler = /** @class */ (function () {
     };
     CommandHandler.prototype.debugCommand = function (message) {
         return __awaiter(this, void 0, void 0, function () {
-            var matches, i, currentSong, PreferredYouTubeLink;
+            var matches, i, song;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.debug(message)];
@@ -70,17 +70,10 @@ var CommandHandler = /** @class */ (function () {
                         _a.label = 2;
                     case 2:
                         if (!(i < matches.length)) return [3 /*break*/, 5];
-                        currentSong = matches[i].Title + " - " + matches[i].RawArtists;
-                        PreferredYouTubeLink = matches[i].PreferredYouTubeLink;
-                        if (PreferredYouTubeLink != "") {
-                            currentSong = PreferredYouTubeLink;
-                        }
-                        message.content = ".p " + currentSong;
-                        // message.reply(message.content)
-                        return [4 /*yield*/, this.playCommand(message)];
+                        return [4 /*yield*/, Helper_1.Helper.dbSongToSongObject(matches[i])];
                     case 3:
-                        // message.reply(message.content)
-                        _a.sent();
+                        song = _a.sent();
+                        Player_1.Player.play_or_queue(message, song);
                         _a.label = 4;
                     case 4:
                         i++;
@@ -96,7 +89,7 @@ var CommandHandler = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        amount = Helper_1.Helper.getArgSlice(message, 1);
+                        amount = Helper_1.Helper.getArgSlice(message, 2);
                         playlistId = parseInt(Helper_1.Helper.getArgSlice(message, 1));
                         return [4 /*yield*/, DatabaseHandler_1.DatabaseHandler.getPlaylistFromDatabase(playlistId)];
                     case 1:
@@ -234,7 +227,7 @@ var CommandHandler = /** @class */ (function () {
                     case 1:
                         songInfo = _a.sent();
                         song = Helper_1.Helper.songInfoToSongObject(songInfo);
-                        Player_1.Player.play_or_queue(voiceChannel, message, song);
+                        Player_1.Player.play_or_queue(message, song);
                         return [2 /*return*/];
                 }
             });
@@ -303,7 +296,7 @@ var CommandHandler = /** @class */ (function () {
                         return [4 /*yield*/, Helper_1.Helper.youtubeIdToSongObject(playlistInfo[i].id)];
                     case 3:
                         song = _a.sent();
-                        Player_1.Player.play_or_queue(voiceChannel, message, song);
+                        Player_1.Player.play_or_queue(message, song);
                         _a.label = 4;
                     case 4:
                         i++;

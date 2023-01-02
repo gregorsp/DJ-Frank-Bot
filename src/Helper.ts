@@ -2,6 +2,7 @@ import request = require("request");
 import { Song } from "./interfaces";
 import { MusicHandler } from "./MusicHandler";
 import { Message } from "discord.js";
+import { videoInfo } from "ytdl-core";
 export class Helper {
   static doRequest(url) {
     return new Promise(function (resolve, reject) {
@@ -36,7 +37,7 @@ export class Helper {
     var d = c.slice(0)[0];
     return d;
   }
-  public static songInfoToSongObject(songInfo): Song {
+  public static songInfoToSongObject(songInfo: videoInfo): Song {
     return {
       title: songInfo.videoDetails.title,
       url: songInfo.videoDetails.video_url,
@@ -60,5 +61,15 @@ export class Helper {
       skipAmount++;
     }
     return message.content.split(" ").slice(skipAmount);
+  }
+  public static async dbSongToSongObject(dbSong: any): Promise<Song> {
+    let songInfo: videoInfo;
+    if (dbSong.PreferredYouTubeLink != "") {
+      songInfo = await MusicHandler.getSongInfo(dbSong.PreferredYouTubeLink);
+    } else {
+      songInfo = await MusicHandler.getSongInfo(dbSong.Title + " - " + dbSong.RawArtists);
+    }
+    let song = Helper.songInfoToSongObject(songInfo);
+    return song;
   }
 }

@@ -7,6 +7,8 @@ import { Helper } from "./Helper";
 import { MusicHandler } from "./MusicHandler";
 import { QueueHandler } from "./QueueHandler";
 import { Player } from "./Player";
+import { Song } from "./interfaces";
+import { videoInfo } from "ytdl-core";
 export class CommandHandler {
   queueCommand(message: discord.Message) {
     let serverQueue = QueueHandler.queueGet(message.guild.id);
@@ -23,20 +25,14 @@ export class CommandHandler {
   public async debugCommand(message: discord.Message) {
     var matches = await this.debug(message);
     for (let i = 0; i < matches.length; i++) {
-      var currentSong = matches[i].Title + " - " + matches[i].RawArtists;
-      var PreferredYouTubeLink = matches[i].PreferredYouTubeLink;
-      if (PreferredYouTubeLink != "") {
-        currentSong = PreferredYouTubeLink;
-      }
-      message.content = ".p " + currentSong;
-      // message.reply(message.content)
+      let song = await Helper.dbSongToSongObject(matches[i]);
 
-      await this.playCommand(message);
+      Player.play_or_queue(message, song);
     }
   }
 
   private async debug(message: Message) {
-    const amount = Helper.getArgSlice(message, 1);
+    const amount = Helper.getArgSlice(message, 2);
     const playlistId = parseInt(Helper.getArgSlice(message, 1));
     var matches = await DatabaseHandler.getPlaylistFromDatabase(playlistId);
     var toQueue = [];
@@ -109,7 +105,7 @@ export class CommandHandler {
     //console.log(songInfo2);
     const song = Helper.songInfoToSongObject(songInfo);
 
-    Player.play_or_queue(voiceChannel, message, song);
+    Player.play_or_queue(message, song);
   }
 
   async forcePlayCommand(message: Message) {
@@ -156,7 +152,7 @@ export class CommandHandler {
 
     for (let i = 0; i < playlistInfo.length; i++) {
       let song = await Helper.youtubeIdToSongObject(playlistInfo[i].id);
-      Player.play_or_queue(voiceChannel, message, song);
+      Player.play_or_queue(message, song);
     }
   }
 

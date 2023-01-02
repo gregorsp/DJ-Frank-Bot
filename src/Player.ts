@@ -6,7 +6,8 @@ import ytdl = require("ytdl-core");
 import { Song } from "./interfaces";
 import { Queue } from "./interfaces";
 export class Player {
-  public static async play_or_queue(voiceChannel: VoiceChannel, message: Message, song: Song) {
+  public static async play_or_queue(message: Message, song: Song) {
+    let voiceChannel = message.member.voice.channel;
     var serverQueue = QueueHandler.queueGet(message.guild.id);
     if (!serverQueue) {
       serverQueue = QueueHandler.setServerQueue(message);
@@ -57,8 +58,6 @@ export class Player {
         let serverQueue = QueueHandler.queueGet(guild.id);
         console.error(error);
         serverQueue.textChannel.send("Fehler beim abspielen:\n" + error);
-        // serverQueue.songs.shift();
-        this.reallyPlay(guild, serverQueue.songs[0]);
       });
     dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
 

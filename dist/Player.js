@@ -43,10 +43,11 @@ var ytdl = require("ytdl-core");
 var Player = /** @class */ (function () {
     function Player() {
     }
-    Player.play_or_queue = function (voiceChannel, message, song) {
+    Player.play_or_queue = function (message, song) {
         return __awaiter(this, void 0, void 0, function () {
-            var serverQueue;
+            var voiceChannel, serverQueue;
             return __generator(this, function (_a) {
+                voiceChannel = message.member.voice.channel;
                 serverQueue = QueueHandler_1.QueueHandler.queueGet(message.guild.id);
                 if (!serverQueue) {
                     serverQueue = QueueHandler_1.QueueHandler.setServerQueue(message);
@@ -117,8 +118,6 @@ var Player = /** @class */ (function () {
             var serverQueue = QueueHandler_1.QueueHandler.queueGet(guild.id);
             console.error(error);
             serverQueue.textChannel.send("Fehler beim abspielen:\n" + error);
-            // serverQueue.songs.shift();
-            _this.reallyPlay(guild, serverQueue.songs[0]);
         });
         dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
         MessageHandler_1.MessageHandler.sendSongToChat(serverQueue, song);

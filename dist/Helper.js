@@ -113,6 +113,28 @@ var Helper = /** @class */ (function () {
         }
         return message.content.split(" ").slice(skipAmount);
     };
+    Helper.dbSongToSongObject = function (dbSong) {
+        return __awaiter(this, void 0, void 0, function () {
+            var songInfo, song;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(dbSong.PreferredYouTubeLink != "")) return [3 /*break*/, 2];
+                        return [4 /*yield*/, MusicHandler_1.MusicHandler.getSongInfo(dbSong.PreferredYouTubeLink)];
+                    case 1:
+                        songInfo = _a.sent();
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, MusicHandler_1.MusicHandler.getSongInfo(dbSong.Title + " - " + dbSong.RawArtists)];
+                    case 3:
+                        songInfo = _a.sent();
+                        _a.label = 4;
+                    case 4:
+                        song = Helper.songInfoToSongObject(songInfo);
+                        return [2 /*return*/, song];
+                }
+            });
+        });
+    };
     return Helper;
 }());
 exports.Helper = Helper;

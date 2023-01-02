@@ -1,6 +1,7 @@
 import { MessageEmbed } from "discord.js";
+import { Queue, Song } from "./interfaces";
 export class MessageHandler {
-  static sendSongToChat(serverQueue, song) {
+  static sendSongToChat(serverQueue: Queue, song: Song) {
     serverQueue.textChannel.send(`Jetzt: **${song.title}**`);
     serverQueue.textChannel.send(this.getMusicEmbed(song.videoDetails, serverQueue));
 
