@@ -55,76 +55,82 @@ var InputHandler = /** @class */ (function () {
                         command = message.content.slice(this.prefix.length).split(" ")[0];
                         _a = command;
                         switch (_a) {
-                            case "debug": return [3 /*break*/, 1];
-                            case "p": return [3 /*break*/, 3];
-                            case "play": return [3 /*break*/, 3];
-                            case "forceplay": return [3 /*break*/, 4];
-                            case "playlist": return [3 /*break*/, 5];
-                            case "q": return [3 /*break*/, 6];
-                            case "queue": return [3 /*break*/, 6];
-                            case "inqueue": return [3 /*break*/, 6];
-                            case "warteschlange": return [3 /*break*/, 6];
-                            case "next": return [3 /*break*/, 6];
-                            case "skip": return [3 /*break*/, 7];
-                            case "next": return [3 /*break*/, 7];
-                            case "s": return [3 /*break*/, 7];
-                            case "stop": return [3 /*break*/, 8];
-                            case "leave": return [3 /*break*/, 8];
-                            case "quit": return [3 /*break*/, 8];
-                            case "disconnect": return [3 /*break*/, 8];
-                            case "say": return [3 /*break*/, 9];
-                            case "repo": return [3 /*break*/, 10];
-                            case "random": return [3 /*break*/, 11];
-                            case "r": return [3 /*break*/, 11];
-                            case "i": return [3 /*break*/, 13];
-                            case "spotify": return [3 /*break*/, 15];
+                            case "surprise": return [3 /*break*/, 1];
+                            case "debug": return [3 /*break*/, 3];
+                            case "p": return [3 /*break*/, 5];
+                            case "play": return [3 /*break*/, 5];
+                            case "forceplay": return [3 /*break*/, 6];
+                            case "fp": return [3 /*break*/, 6];
+                            case "playlist": return [3 /*break*/, 7];
+                            case "q": return [3 /*break*/, 8];
+                            case "queue": return [3 /*break*/, 8];
+                            case "inqueue": return [3 /*break*/, 8];
+                            case "warteschlange": return [3 /*break*/, 8];
+                            case "next": return [3 /*break*/, 8];
+                            case "skip": return [3 /*break*/, 9];
+                            case "next": return [3 /*break*/, 9];
+                            case "s": return [3 /*break*/, 9];
+                            case "stop": return [3 /*break*/, 10];
+                            case "leave": return [3 /*break*/, 10];
+                            case "quit": return [3 /*break*/, 10];
+                            case "disconnect": return [3 /*break*/, 10];
+                            case "say": return [3 /*break*/, 11];
+                            case "repo": return [3 /*break*/, 12];
+                            case "random": return [3 /*break*/, 13];
+                            case "r": return [3 /*break*/, 13];
+                            case "i": return [3 /*break*/, 15];
+                            case "spotify": return [3 /*break*/, 17];
                         }
-                        return [3 /*break*/, 17];
-                    case 1: return [4 /*yield*/, this.cmd.debugCommand(message)];
+                        return [3 /*break*/, 19];
+                    case 1: return [4 /*yield*/, this.cmd.surpriseCommand(message)];
                     case 2:
                         _b.sent();
-                        return [3 /*break*/, 18];
-                    case 3:
+                        return [3 /*break*/, 20];
+                    case 3: return [4 /*yield*/, this.cmd.debugCommand(message)];
+                    case 4:
+                        _b.sent();
+                        return [3 /*break*/, 20];
+                    case 5:
                         if (message.content.length <= 6)
                             return [2 /*return*/];
                         this.cmd.playCommand(message);
-                        return [3 /*break*/, 18];
-                    case 4:
-                        this.cmd.forcePlayCommand(message);
-                        return [3 /*break*/, 18];
-                    case 5:
-                        this.cmd.playlistCommand(message);
-                        return [3 /*break*/, 18];
+                        return [3 /*break*/, 20];
                     case 6:
-                        this.cmd.queueCommand(message);
-                        return [3 /*break*/, 18];
+                        this.cmd.forcePlayCommand(message);
+                        return [3 /*break*/, 20];
                     case 7:
-                        this.cmd.skipCommand(message);
-                        return [3 /*break*/, 18];
+                        this.cmd.playlistCommand(message);
+                        return [3 /*break*/, 20];
                     case 8:
-                        this.cmd.clearQueueCommand(message);
-                        return [3 /*break*/, 18];
+                        this.cmd.queueCommand(message);
+                        return [3 /*break*/, 20];
                     case 9:
-                        this.cmd.sayCommand(message);
-                        return [3 /*break*/, 18];
+                        this.cmd.skipCommand(message);
+                        return [3 /*break*/, 20];
                     case 10:
+                        this.cmd.clearQueueCommand(message);
+                        return [3 /*break*/, 20];
+                    case 11:
+                        this.cmd.sayCommand(message);
+                        return [3 /*break*/, 20];
+                    case 12:
                         link = "https://www.github.com/gregorsp/DJ-Frank-Bot";
                         message.reply(link);
-                        return [3 /*break*/, 18];
-                    case 11: return [4 /*yield*/, this.cmd.randomCommand(message)];
-                    case 12:
-                        _b.sent();
-                        return [3 /*break*/, 18];
-                    case 13: return [4 /*yield*/, this.cmd.interpretCommand(message)];
+                        return [3 /*break*/, 20];
+                    case 13: return [4 /*yield*/, this.cmd.randomCommand(message)];
                     case 14:
                         _b.sent();
-                        return [3 /*break*/, 18];
-                    case 15: return [4 /*yield*/, this.cmd.spotifyCommand(message)];
+                        return [3 /*break*/, 20];
+                    case 15: return [4 /*yield*/, this.cmd.interpretCommand(message)];
                     case 16:
                         _b.sent();
-                        return [3 /*break*/, 18];
-                    case 17: return [3 /*break*/, 18];
-                    case 18: return [2 /*return*/];
+                        return [3 /*break*/, 20];
+                    case 17: return [4 /*yield*/, this.cmd.spotifyCommand(message)];
+                    case 18:
+                        _b.sent();
+                        return [3 /*break*/, 20];
+                    case 19: return [3 /*break*/, 20];
+                    case 20: return [2 /*return*/];
                 }
             });
         }); };

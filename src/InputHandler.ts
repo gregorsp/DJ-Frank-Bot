@@ -11,6 +11,9 @@ export class InputHandler {
 
     const command = message.content.slice(this.prefix.length).split(" ")[0];
     switch (command) {
+      case "surprise":
+        await this.cmd.surpriseCommand(message);
+        break;
       case "debug":
         await this.cmd.debugCommand(message);
         break;
@@ -20,6 +23,7 @@ export class InputHandler {
         this.cmd.playCommand(message);
         break;
       case "forceplay":
+      case "fp":
         this.cmd.forcePlayCommand(message);
         break;
       case "playlist":

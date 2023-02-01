@@ -10,7 +10,7 @@ export class MessageHandler {
     }
   }
 
-  public static sendAddedToQueue(channel, song) {
+  public static sendAddedToQueue(channel, song : Song) {
     return channel.send(`${song.title} wurde zur Queue hinzugefügt!`);
   }
   static getMusicEmbed(videoDetails, queue: any = []) {
@@ -21,12 +21,16 @@ export class MessageHandler {
       author = author.slice(0, author.length - 8);
     }
     var count = queue.songs.length - 1;
+    var next = "Noch " + count + " weitere Lieder in der Queue";
+    if ( count > 1) {
+      next += ", als nächstes kommt: " + queue.songs[1].title;
+    }
     const embed = new MessageEmbed()
       .setColor("#0099ff")
       .setTitle(videoDetails.title)
       .setURL(videoDetails.video_url)
       .setAuthor(author, videoDetails.author.thumbnails.slice(-1)[0].url, videoDetails.author.user_url)
-      .setFooter("Noch " + count + " weitere Lieder in der Queue")
+      .setFooter(next)
       //.setDescription(videoDetails.description)
       //.setThumbnail(videoDetails.thumbnails.slice(-1)[0].url)
       // .addFields(

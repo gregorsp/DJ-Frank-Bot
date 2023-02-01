@@ -135,6 +135,20 @@ var Helper = /** @class */ (function () {
             });
         });
     };
+    Helper.songnameToSongObject = function (songname) {
+        return __awaiter(this, void 0, void 0, function () {
+            var songInfo, song;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, MusicHandler_1.MusicHandler.getSongInfo(songname)];
+                    case 1:
+                        songInfo = _a.sent();
+                        song = Helper.songInfoToSongObject(songInfo);
+                        return [2 /*return*/, song];
+                }
+            });
+        });
+    };
     return Helper;
 }());
 exports.Helper = Helper;

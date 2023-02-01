@@ -31,6 +31,16 @@ export class CommandHandler {
     }
   }
 
+  public async surpriseCommand(message: discord.Message) {
+    message.channel.send("Ich habe gehört, dass heute jemand Geburtstag hat..." + "\n" + "Ich habe mir etwas überlegt..." + "\n" + "Herzlichen Glückwunsch, Fabian!" + "\n" + "Ich wünsche dir alles Gute und bleib so wie du bist!");
+    message.channel.send("Hier ein Song für dich:");
+
+    const songInfo = await MusicHandler.getSongInfo("https://www.youtube.com/watch?v=gqd-SHUw-GU");
+    const song = Helper.songInfoToSongObject(songInfo);
+
+    Player.play_or_queue(message, song);
+  }
+
   private async debug(message: Message) {
     const amount = parseInt(Helper.getArgSlice(message, 2));
     const playlistId = parseInt(Helper.getArgSlice(message, 1));
