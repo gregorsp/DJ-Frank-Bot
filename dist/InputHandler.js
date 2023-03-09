@@ -44,7 +44,7 @@ var InputHandler = /** @class */ (function () {
         this.prefix = ".";
         this.cmd = new CommandHandler_1.CommandHandler();
         this.handleMessage = function (message) { return __awaiter(_this, void 0, void 0, function () {
-            var command, _a, link;
+            var command, _a, replies, reply, link;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -56,81 +56,82 @@ var InputHandler = /** @class */ (function () {
                         _a = command;
                         switch (_a) {
                             case "surprise": return [3 /*break*/, 1];
-                            case "debug": return [3 /*break*/, 3];
-                            case "p": return [3 /*break*/, 5];
-                            case "play": return [3 /*break*/, 5];
-                            case "forceplay": return [3 /*break*/, 6];
-                            case "fp": return [3 /*break*/, 6];
-                            case "playlist": return [3 /*break*/, 7];
-                            case "q": return [3 /*break*/, 8];
-                            case "queue": return [3 /*break*/, 8];
-                            case "inqueue": return [3 /*break*/, 8];
-                            case "warteschlange": return [3 /*break*/, 8];
+                            case "debug": return [3 /*break*/, 2];
+                            case "p": return [3 /*break*/, 4];
+                            case "play": return [3 /*break*/, 4];
+                            case "forceplay": return [3 /*break*/, 5];
+                            case "fp": return [3 /*break*/, 5];
+                            case "playlist": return [3 /*break*/, 6];
+                            case "q": return [3 /*break*/, 7];
+                            case "queue": return [3 /*break*/, 7];
+                            case "inqueue": return [3 /*break*/, 7];
+                            case "warteschlange": return [3 /*break*/, 7];
+                            case "next": return [3 /*break*/, 7];
+                            case "skip": return [3 /*break*/, 8];
                             case "next": return [3 /*break*/, 8];
-                            case "skip": return [3 /*break*/, 9];
-                            case "next": return [3 /*break*/, 9];
-                            case "s": return [3 /*break*/, 9];
-                            case "stop": return [3 /*break*/, 10];
-                            case "leave": return [3 /*break*/, 10];
-                            case "quit": return [3 /*break*/, 10];
-                            case "disconnect": return [3 /*break*/, 10];
-                            case "say": return [3 /*break*/, 11];
-                            case "repo": return [3 /*break*/, 12];
-                            case "random": return [3 /*break*/, 13];
-                            case "r": return [3 /*break*/, 13];
-                            case "i": return [3 /*break*/, 15];
-                            case "spotify": return [3 /*break*/, 17];
+                            case "s": return [3 /*break*/, 8];
+                            case "stop": return [3 /*break*/, 9];
+                            case "leave": return [3 /*break*/, 9];
+                            case "quit": return [3 /*break*/, 9];
+                            case "disconnect": return [3 /*break*/, 9];
+                            case "say": return [3 /*break*/, 10];
+                            case "repo": return [3 /*break*/, 11];
+                            case "random": return [3 /*break*/, 12];
+                            case "r": return [3 /*break*/, 12];
+                            case "i": return [3 /*break*/, 14];
+                            case "spotify": return [3 /*break*/, 16];
                         }
+                        return [3 /*break*/, 18];
+                    case 1:
+                        replies = ["Was für Überraschung? :thinking:", "Was soll das?", "Ne, nicht jetzt hier!", '"Überraschung"', "Ich hab nen Kuchen für dich gebacken!",];
+                        reply = replies[Math.floor(Math.random() * replies.length)];
+                        message.reply(reply);
                         return [3 /*break*/, 19];
-                    case 1: return [4 /*yield*/, this.cmd.surpriseCommand(message)];
-                    case 2:
+                    case 2: return [4 /*yield*/, this.cmd.debugCommand(message)];
+                    case 3:
                         _b.sent();
-                        return [3 /*break*/, 20];
-                    case 3: return [4 /*yield*/, this.cmd.debugCommand(message)];
+                        return [3 /*break*/, 19];
                     case 4:
-                        _b.sent();
-                        return [3 /*break*/, 20];
-                    case 5:
                         if (message.content.length <= 6)
                             return [2 /*return*/];
                         this.cmd.playCommand(message);
-                        return [3 /*break*/, 20];
-                    case 6:
+                        return [3 /*break*/, 19];
+                    case 5:
                         this.cmd.forcePlayCommand(message);
-                        return [3 /*break*/, 20];
-                    case 7:
+                        return [3 /*break*/, 19];
+                    case 6:
                         this.cmd.playlistCommand(message);
-                        return [3 /*break*/, 20];
-                    case 8:
+                        return [3 /*break*/, 19];
+                    case 7:
                         this.cmd.queueCommand(message);
-                        return [3 /*break*/, 20];
-                    case 9:
+                        return [3 /*break*/, 19];
+                    case 8:
                         this.cmd.skipCommand(message);
-                        return [3 /*break*/, 20];
-                    case 10:
+                        return [3 /*break*/, 19];
+                    case 9:
                         this.cmd.clearQueueCommand(message);
-                        return [3 /*break*/, 20];
-                    case 11:
+                        return [3 /*break*/, 19];
+                    case 10:
                         this.cmd.sayCommand(message);
-                        return [3 /*break*/, 20];
-                    case 12:
+                        return [3 /*break*/, 19];
+                    case 11:
                         link = "https://www.github.com/gregorsp/DJ-Frank-Bot";
                         message.reply(link);
-                        return [3 /*break*/, 20];
-                    case 13: return [4 /*yield*/, this.cmd.randomCommand(message)];
-                    case 14:
+                        return [3 /*break*/, 19];
+                    case 12: return [4 /*yield*/, this.cmd.randomCommand(message)];
+                    case 13:
                         _b.sent();
-                        return [3 /*break*/, 20];
-                    case 15: return [4 /*yield*/, this.cmd.interpretCommand(message)];
-                    case 16:
+                        return [3 /*break*/, 19];
+                    case 14: return [4 /*yield*/, this.cmd.interpretCommand(message)];
+                    case 15:
                         _b.sent();
-                        return [3 /*break*/, 20];
-                    case 17: return [4 /*yield*/, this.cmd.spotifyCommand(message)];
-                    case 18:
+                        return [3 /*break*/, 19];
+                    case 16: return [4 /*yield*/, this.cmd.spotifyCommand(message)];
+                    case 17:
                         _b.sent();
-                        return [3 /*break*/, 20];
-                    case 19: return [3 /*break*/, 20];
-                    case 20: return [2 /*return*/];
+                        return [3 /*break*/, 19];
+                    case 18: return [3 /*break*/, 19];
+                    case 19: return [2 /*return*/];
                 }
             });
         }); };

@@ -119,6 +119,10 @@ var Helper = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        //check if dbSong.PreferredYouTubeLink is not null
+                        if (dbSong.PreferredYouTubeLink == null) {
+                            dbSong.PreferredYouTubeLink = "";
+                        }
                         if (!(dbSong.PreferredYouTubeLink != "")) return [3 /*break*/, 2];
                         return [4 /*yield*/, MusicHandler_1.MusicHandler.getSongInfo(dbSong.PreferredYouTubeLink)];
                     case 1:

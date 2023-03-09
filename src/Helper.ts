@@ -64,6 +64,11 @@ export class Helper {
   }
   public static async dbSongToSongObject(dbSong: any): Promise<Song> {
     let songInfo: videoInfo;
+    //check if dbSong.PreferredYouTubeLink is not null
+    if (dbSong.PreferredYouTubeLink == null) {
+      dbSong.PreferredYouTubeLink = "";
+    }
+
     if (dbSong.PreferredYouTubeLink != "") {
       songInfo = await MusicHandler.getSongInfo(dbSong.PreferredYouTubeLink);
     } else {

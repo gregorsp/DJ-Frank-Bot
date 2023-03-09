@@ -12,7 +12,10 @@ export class InputHandler {
     const command = message.content.slice(this.prefix.length).split(" ")[0];
     switch (command) {
       case "surprise":
-        await this.cmd.surpriseCommand(message);
+        //await this.cmd.surpriseCommand(message);
+        let replies = [ "Was für Überraschung? :thinking:", "Was soll das?", "Ne, nicht jetzt hier!", '"Überraschung"', "Ich hab nen Kuchen für dich gebacken!",];
+        let reply = replies[Math.floor(Math.random() * replies.length)];
+        message.reply(reply);
         break;
       case "debug":
         await this.cmd.debugCommand(message);
