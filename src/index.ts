@@ -21,4 +21,7 @@ client.once("disconnect", () => {
 
 client.on("message", handler.handleMessage);
 
+// client.on()
+
 client.login(token);
+

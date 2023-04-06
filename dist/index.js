@@ -16,5 +16,6 @@ client.once("disconnect", function () {
     console.log("Disconnect!");
 });
 client.on("message", handler.handleMessage);
+// client.on()
 client.login(token);
 //# sourceMappingURL=index.js.map

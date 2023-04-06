@@ -29,7 +29,7 @@ export class MessageHandler {
       .setColor("#0099ff")
       .setTitle(videoDetails.title)
       .setURL(videoDetails.video_url)
-      .setAuthor(author, videoDetails.author.thumbnails.slice(-1)[0].url, videoDetails.author.user_url)
+      //.setAuthor(author, videoDetails.author.thumbnails.slice(-1)[0].url, videoDetails.author.user_url)
       .setFooter(next)
       //.setDescription(videoDetails.description)
       //.setThumbnail(videoDetails.thumbnails.slice(-1)[0].url)
